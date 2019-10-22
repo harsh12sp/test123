@@ -13,6 +13,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminMoore.Api.Retail.Po
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Integration", "CustomerLoyalty.FunctionApp.Tests.Integration\BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Integration.csproj", "{8EC830A9-C878-48B4-841E-602253D93448}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Artifacts", "Artifacts", "{1E79C810-2C6B-42B6-B6E9-5B0183A89EF9}"
+	ProjectSection(SolutionItems) = preProject
+		..\azure-pipeline-validation.yml = ..\azure-pipeline-validation.yml
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

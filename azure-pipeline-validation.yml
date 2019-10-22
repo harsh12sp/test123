@@ -1,0 +1,30 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'Restore'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: '4f92a9d6-ce6d-44de-a4d1-dd4c2f11f052'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Test'
+  inputs:
+    command: 'test'
+    projects: '**/*[Tt]ests*/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage"'
