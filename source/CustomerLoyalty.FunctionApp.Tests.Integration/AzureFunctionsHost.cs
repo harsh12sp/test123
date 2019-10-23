@@ -30,7 +30,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Integra
             ShutDownHostProcess();
         }
 
-        public AzureFunctionsHost Start()
+        public AzureFunctionsHost Start(TimeSpan delay)
         {
             ShutDownHostProcess();
 
@@ -53,7 +53,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Integra
                 throw new InvalidOperationException("Could not start Azure Functions host.");
             }
 
-            Task.Delay(2000); //Give process a chance to get started.
+            Task.Delay(delay); //Give process a chance to get started.
 
             _port = availablePort;
 

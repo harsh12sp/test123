@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
@@ -9,11 +10,12 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Integra
     public class CustomerLoyaltyFunctionTests
     {
         [Fact(Skip = "This won't run in azure devops either (unless we have a custom build server)")]
+        //[Fact]
         public async Task GetCustomers_WhenCalledWithInvalidRoute_ShouldReturnA200()
         {
             AzureFunctionsHostSettings azureFunctionsHostSettings = Settings.GetFromAppsettings<AzureFunctionsHostSettings>();
 
-            using (AzureFunctionsHost functionsHost = new AzureFunctionsHost(azureFunctionsHostSettings).Start())
+            using (AzureFunctionsHost functionsHost = new AzureFunctionsHost(azureFunctionsHostSettings).Start(TimeSpan.FromSeconds(10)))
             {
                 HttpClient httpClient = functionsHost.GetClient();
 

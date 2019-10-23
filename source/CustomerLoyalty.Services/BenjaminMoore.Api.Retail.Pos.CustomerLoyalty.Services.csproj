@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="BenjaminMoore.Api.Retail.Pos.Common" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.EventGrid" Version="3.2.0" />
   </ItemGroup>
 
 </Project>

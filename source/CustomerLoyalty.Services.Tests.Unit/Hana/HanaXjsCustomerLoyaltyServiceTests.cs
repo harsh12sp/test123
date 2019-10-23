@@ -11,6 +11,8 @@ using BenjaminMoore.Api.Retail.Pos.Common.Http;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities;
+using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
+using Microsoft.Azure.EventGrid.Models;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
@@ -23,27 +25,29 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
         private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
         private readonly Mock<IConfigurationSettings> _configurationSettingsMock;
         private readonly ICustomerLoyaltyService _customerLoyaltyService;
+        private readonly Mock<IEventPublisher<Customer>> _customerPublisherMock;
 
         public HanaXjsCustomerLoyaltyServiceTests()
         {
             _httpClientFactoryMock = new Mock<IHttpClientFactory>();
             _configurationSettingsMock = new Mock<IConfigurationSettings>();
+            _customerPublisherMock = new Mock<IEventPublisher<Customer>>();
 
             _configurationSettingsMock.SetupGet(setup => setup.CreateCustomerLoyaltyEndpoint)
                 .Returns("https://mock.local");
 
             _customerLoyaltyService =
-                new HanaXjsCustomerLoyaltyService(_httpClientFactoryMock.Object, _configurationSettingsMock.Object);
+                new HanaXjsCustomerLoyaltyService(_httpClientFactoryMock.Object, _configurationSettingsMock.Object, _customerPublisherMock.Object);
         }
 
         [Theory]
         [ClassData(typeof(ConstructorClassData))]
         public void Ctor_WhenCalledWithInvalidConstructorData_ShouldThrowArgumentNullException(
-            IHttpClientFactory clientFactory, IConfigurationSettings configurationSettings)
+            IHttpClientFactory clientFactory, IConfigurationSettings configurationSettings, IEventPublisher<Customer> customerPublisher)
         {
             // AAA
             Assert.Throws<ArgumentNullException>(() =>
-                new HanaXjsCustomerLoyaltyService(clientFactory, configurationSettings));
+                new HanaXjsCustomerLoyaltyService(clientFactory, configurationSettings, customerPublisher));
         }
 
         [Fact]
@@ -57,10 +61,12 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
         [Fact]
         public async Task CreateCustomerLoyalty_WhenCustomerIsNull_ShouldNotCreateHttpClient()
         {
+            // Arrange
             _httpClientFactoryMock.Setup(setup => setup.CreateHttpClient()).ReturnsAsync(new HttpClient());
 
             try
             {
+                // Act
                 await _customerLoyaltyService.CreateCustomerLoyalty(default(Customer));
             }
             catch (ArgumentNullException)
@@ -68,6 +74,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
                 // expected exception
             }
 
+            // Assert
             _httpClientFactoryMock.Verify(verify => verify.CreateHttpClient(), Times.Never);
         }
 
@@ -115,13 +122,66 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
             Assert.NotNull(customerLoyaltyIndicator);
         }
 
+        [Fact]
+        public async Task CreateCustomerLoyalty_WhenCustomerIsPosted_ShouldCallThePublisher()
+        {
+            _httpClientFactoryMock.Setup(setup => setup.CreateHttpClient())
+                .ReturnsAsync(new TestHttpClient(
+                    new StatusCodeMessageHandler<HanaXjsCreateLoyaltyResponse>(HttpStatusCode.OK,
+                        new HanaXjsCreateLoyaltyResponse())));
+
+            Customer customer = new Customer();
+
+            _customerPublisherMock.Setup(setup => setup.Publish(It.IsAny<Func<Customer, EventGridEvent>>(), It.IsAny<Customer>())).Returns(Task.CompletedTask)
+                .Callback<Func<Customer, EventGridEvent>, Customer[]>((converter, customerArg) =>
+                {
+                    // Assert -- Ensure the customer we passed in is the customer returned?
+                    Assert.Contains(customer, customerArg);
+                });
+
+            await _customerLoyaltyService.CreateCustomerLoyalty(customer);
+
+            // Assert
+            _customerPublisherMock.Verify(verify => verify.Publish(It.IsAny<Func<Customer, EventGridEvent>>(), It.IsAny<Customer>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateCustomerLoyalty_WhenHanaSays400_ShouldThrowAHanaRequestException()
+        {
+            _httpClientFactoryMock.Setup(setup => setup.CreateHttpClient())
+                .ReturnsAsync(new TestHttpClient(
+                    new StatusCodeMessageHandler<string>(HttpStatusCode.BadRequest,
+                        "\"reason\":\"some hana error\"")));
+
+            await Assert.ThrowsAsync<HanaRequestException>(async () =>
+                await _customerLoyaltyService.CreateCustomerLoyalty(new Customer()));
+        }
+
 
         internal class ConstructorClassData : IEnumerable<object[]>
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] {new Mock<IHttpClientFactory>().Object, default(IConfigurationSettings)};
-                yield return new object[] {default(IHttpClientFactory), new Mock<IConfigurationSettings>().Object};
+                yield return new object[]
+                {
+                    default(IHttpClientFactory),
+                    new Mock<IConfigurationSettings>().Object,
+                    new Mock<IEventPublisher<Customer>>().Object
+                };
+
+                yield return new object[]
+                {
+                    new Mock<IHttpClientFactory>().Object,
+                    default(IConfigurationSettings),
+                    new Mock<IEventPublisher<Customer>>().Object
+                };
+                
+                yield return new object[]
+                {
+                    new Mock<IHttpClientFactory>().Object,
+                    new Mock<IConfigurationSettings>().Object,
+                    default(IEventPublisher<Customer>)
+                };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

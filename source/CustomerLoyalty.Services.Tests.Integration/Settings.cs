@@ -1,14 +1,17 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using Microsoft.Extensions.Configuration;
 
-namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Integration
+namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integration
 {
     [ExcludeFromCodeCoverage]
     public static class Settings
     {
-        public static T GetFromAppsettings<T>(string buildName = null) where T : class, new()
+        public static T GetFromAppSettings<T>(string buildName = null) where T : class, new()
         {
             T settings = new T();
 

@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using BenjaminMoore.Api.Retail.Pos.Common.Http;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities;
+using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
+using Microsoft.Azure.EventGrid.Models;
 
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
 {
@@ -12,12 +14,15 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfigurationSettings _configurationSettings;
+        private readonly IEventPublisher<Customer> _customerEventPublisher;
 
-        public HanaXjsCustomerLoyaltyService(IHttpClientFactory httpClientFactory, IConfigurationSettings configurationSettings)
+
+        public HanaXjsCustomerLoyaltyService(IHttpClientFactory httpClientFactory, IConfigurationSettings configurationSettings, IEventPublisher<Customer> customerEventPublisher)
         {
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _configurationSettings =
                 configurationSettings ?? throw new ArgumentNullException(nameof(configurationSettings));
+            _customerEventPublisher = customerEventPublisher ?? throw new ArgumentNullException(nameof(customerEventPublisher));
         }
 
         public async Task<CustomerLoyaltyIndicator> CreateCustomerLoyalty(Customer customer)
@@ -61,6 +66,16 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
             response.EnsureSuccessStatusCode();
 
             HanaXjsCreateLoyaltyResponse hanaXjsPayload = await response.Content.ReadAsAsync<HanaXjsCreateLoyaltyResponse>();
+
+            await _customerEventPublisher.Publish(c => new EventGridEvent
+            {
+                Id = Guid.NewGuid().ToString(),
+                Subject = c.BenjaminMooreCustomerId,
+                Data = c,
+                EventType = "customer-loyalty-created",
+                EventTime = DateTime.UtcNow,
+                DataVersion = "1.5"
+            }, customer);
 
             return new CustomerLoyaltyIndicator
             {

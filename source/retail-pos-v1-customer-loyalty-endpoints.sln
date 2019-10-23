@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Artifacts", "Artifacts", "{
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integration", "CustomerLoyalty.Services.Tests.Integration\BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integration.csproj", "{CC80E9AA-39A3-41A5-81A0-455D426064D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +91,18 @@ Global
 		{8EC830A9-C878-48B4-841E-602253D93448}.Release|x64.Build.0 = Release|Any CPU
 		{8EC830A9-C878-48B4-841E-602253D93448}.Release|x86.ActiveCfg = Release|Any CPU
 		{8EC830A9-C878-48B4-841E-602253D93448}.Release|x86.Build.0 = Release|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Debug|x64.Build.0 = Debug|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Debug|x86.Build.0 = Debug|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Release|x64.ActiveCfg = Release|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Release|x64.Build.0 = Release|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Release|x86.ActiveCfg = Release|Any CPU
+		{CC80E9AA-39A3-41A5-81A0-455D426064D9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

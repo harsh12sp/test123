@@ -3,7 +3,11 @@ using BenjaminMoore.Api.Retail.Pos.Common.Authentication;
 using BenjaminMoore.Api.Retail.Pos.Common.Http;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services;
+using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
+using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
+using Microsoft.Azure.EventGrid;
+using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,6 +40,16 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
                 return new AzureKeyVaultCertificateLocation(settings.KeyVaultCertificateName, settings.KeyVaultBaseUri);
             });
 
+            builder.Services.AddSingleton<IEventGridClient>(provider =>
+            {
+                IConfigurationSettings settings = provider.GetRequiredService<IConfigurationSettings>();
+                TopicCredentials credentials = new TopicCredentials(settings.EventGridTopicKey);
+                EventGridClient client = new EventGridClient(credentials);
+
+                return client;
+            });
+
+            builder.Services.AddSingleton<IEventPublisher<Customer>, AzureEventGridTopicPublisher<Customer>>();
             builder.Services.AddSingleton<ICertificateValidator, MutualTlsCertificateValidator>();
             builder.Services.AddSingleton<ICertificateRetriever, AzureKeyVaultCertificateRetriever>();
             builder.Services.AddSingleton<IHttpClientFactory, MutualTlsHttpClientFactory>();
