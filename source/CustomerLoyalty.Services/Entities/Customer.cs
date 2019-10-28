@@ -10,49 +10,52 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities
         [JsonProperty("retailer_id")]
         public string RetailerId { get; set; }
 
+        [JsonProperty("loyalty_email_id")]
+        public string LoyaltyEmailAddress { get; set; }
+
         [JsonProperty("business_name")]
         public string BusinessName { get; set; }
 
         [JsonProperty("business_email_id")]
         public string BusinessEmailAddress { get; set; }
 
-        [JsonProperty("loyalty_email_id")]
-        public string LoyaltyEmailAddress { get; set; }
-
         [JsonProperty("business_phone_number")]
         public string BusinessPhoneNumber { get; set; }
 
-        [JsonProperty("first_name")]
-        public string FirstName { get; set; }
+        [JsonProperty("business_type")]
+        public string BusinessType { get; set; }
 
-        [JsonProperty("last_name")]
-        public string LastName { get; set; }
-
-        [JsonProperty("address_line_1")]
+        [JsonProperty("address_line1")]
         public string Address1 { get; set; }
 
-        [JsonProperty("address_line_2")]
+        [JsonProperty("address_line2")]
         public string Address2 { get; set; }
 
         [JsonProperty("city")]
         public string City { get; set; }
 
-        [JsonProperty("state")]
+        [JsonProperty("state_code")]
         public string State { get; set; }
 
-        [JsonProperty("zip")]
+        [JsonProperty("zipcode")]
         public string PostalCode { get; set; }
 
-        [JsonProperty("business_type")]
-        public string BusinessType { get; set; }
+        [JsonProperty("contact_first_name")]
+        public string FirstName { get; set; }
 
-        [JsonProperty("outlet")]
-        public string Outlet { get; set; }
+        [JsonProperty("contact_last_name")]
+        public string LastName { get; set; }
 
         [JsonProperty("contact_email_id")]
         public string ContactEmailAddress { get; set; }
 
         [JsonProperty("contact_phone_number")]
         public string ContactPhoneNumber { get; set; }
+
+        [JsonProperty("segment_code")]
+        public string SegmentCode { get; set; }
+
+        [JsonProperty("language_code")]
+        public string LanguageCode { get; set; }
     }
 }

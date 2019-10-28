@@ -74,10 +74,11 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
                 FirstName = "T",
                 LastName = "Est",
                 LoyaltyEmailAddress = "test@test.test",
-                Outlet = "Test",
                 PostalCode = "12345",
                 RetailerId = "AG1R",
-                State = "NY"
+                State = "NY",
+                SegmentCode = "1234",
+                LanguageCode = "EN"
             });
 
             // Arrange
@@ -120,10 +121,11 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
                 FirstName = "T",
                 LastName = "Est",
                 LoyaltyEmailAddress = "test@test.test",
-                Outlet = "Test",
                 PostalCode = "12345",
                 RetailerId = "AG1R",
-                State = "NY"
+                State = "NY",
+                SegmentCode = "1234",
+                LanguageCode = "EN"
             });
 
             using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(customer)))

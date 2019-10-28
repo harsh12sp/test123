@@ -43,7 +43,6 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integratio
                 FirstName = "Test";
                 LastName = "Test";
                 RetailerId = "Test";
-                Outlet = "Test";
                 State = "NJ";
                 LoyaltyEmailAddress = "test@test.test";
                 PostalCode = "12345";

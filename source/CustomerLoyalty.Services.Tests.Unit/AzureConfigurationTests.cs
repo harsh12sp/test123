@@ -44,6 +44,51 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
             Assert.Equal(settings.EventGridTopicUri, AzureConfigurationSettings.EventGridTopicUriSettingName);
         }
 
+        [Fact]
+        public void DefaultSegmentCode_WhenGotten_ShouldBeExpectedValues()
+        {
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyVaultBaseUriSettingName, AzureConfigurationSettings.KeyVaultBaseUriSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName,
+                AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyValueCertificateNameSettingName, AzureConfigurationSettings.KeyValueCertificateNameSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.EventGridTopicUriSettingName, AzureConfigurationSettings.EventGridTopicUriSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.EventGridTopicKeySettingName, AzureConfigurationSettings.EventGridTopicKeySettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.DefaultSegmentCodeSettingName, AzureConfigurationSettings.DefaultSegmentCodeSettingName);
+
+
+            AzureConfigurationSettings settings = new AzureConfigurationSettings();
+
+            Assert.Equal(settings.DefaultSegmentCode, AzureConfigurationSettings.DefaultSegmentCodeSettingName);
+        }
+
+        [Fact]
+        public void DefaultLanguageCode_WhenGotten_ShouldBeExpectedValues()
+        {
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyVaultBaseUriSettingName, AzureConfigurationSettings.KeyVaultBaseUriSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName,
+                AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyValueCertificateNameSettingName, AzureConfigurationSettings.KeyValueCertificateNameSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.EventGridTopicUriSettingName, AzureConfigurationSettings.EventGridTopicUriSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.EventGridTopicKeySettingName, AzureConfigurationSettings.EventGridTopicKeySettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.DefaultLanguageCodeSettingName, AzureConfigurationSettings.DefaultLanguageCodeSettingName);
+
+
+            AzureConfigurationSettings settings = new AzureConfigurationSettings();
+
+            Assert.Equal(settings.DefaultLanguageCode, AzureConfigurationSettings.DefaultLanguageCodeSettingName);
+        }
 
         internal class ClassData :IEnumerable<object[]>
         {

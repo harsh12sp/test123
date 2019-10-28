@@ -9,5 +9,7 @@
         public string CreateCustomerLoyaltyEndpoint => "Missing";
         public string EventGridTopicUri => Uri;
         public string EventGridTopicKey => Token;
+        public string DefaultSegmentCode => "Missing";
+        public string DefaultLanguageCode => "Missing";
     }
 }

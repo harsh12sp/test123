@@ -47,11 +47,22 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 LoyaltyEmailAddress = customer.LoyaltyEmailAddress,
-                Outlet = customer.Outlet,
                 PostalCode = customer.PostalCode,
                 RetailerId = customer.RetailerId,
-                State = customer.State
+                State = customer.State,
+                SegmentCode = customer.SegmentCode,
+                LanguageCode = customer.LanguageCode
             };
+
+            if (string.IsNullOrWhiteSpace(customerLoyaltyRequest.SegmentCode))
+            {
+                customerLoyaltyRequest.SegmentCode = _configurationSettings.DefaultSegmentCode;
+            }
+
+            if (string.IsNullOrWhiteSpace(customerLoyaltyRequest.LanguageCode))
+            {
+                customerLoyaltyRequest.SegmentCode = _configurationSettings.DefaultLanguageCode;
+            }
 
             HttpClient client = await _httpClientFactory.CreateHttpClient();
 

@@ -37,10 +37,11 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Integra
                         FirstName = "T",
                         LastName = "Est",
                         LoyaltyEmailAddress = "test@test.test",
-                        Outlet = "Test",
                         PostalCode = "12345",
                         RetailerId = "AG1R",
-                        State = "NY"
+                        State = "NY",
+                        SegmentCode = "Code1234",
+                        LanguageCode = "EN"
                     });
 
                 // Assert

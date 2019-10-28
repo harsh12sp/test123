@@ -7,5 +7,7 @@
         string CreateCustomerLoyaltyEndpoint { get; }
         string EventGridTopicUri { get; }
         string EventGridTopicKey { get; }
+        string DefaultSegmentCode { get; }
+        string DefaultLanguageCode { get; }
     }
 }

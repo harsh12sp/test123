@@ -39,5 +39,11 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities
         [JsonProperty("contact_email_id")] public string ContactEmailAddress { get; set; }
 
         [JsonProperty("contact_phone_number")] public string ContactPhoneNumber { get; set; }
+
+        [JsonProperty("segment_code")]
+        public string SegmentCode { get; set; }
+
+        [JsonProperty("language_code")]
+        public string LanguageCode { get; set; }
     }
 }

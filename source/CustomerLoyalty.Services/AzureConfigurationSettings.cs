@@ -9,6 +9,10 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
         public const string CreateCustomerLoyaltyEndpointSettingName = "Hana.CreateCustomerLoyaltyEndpoint";
         public const string EventGridTopicUriSettingName = "EventGrid.TopicUri";
         public const string EventGridTopicKeySettingName = "EventGrid.Key";
+        public const string DefaultSegmentCodeSettingName = "Defaults.SegmentCode";
+        public const string DefaultLanguageCodeSettingName = "Defaults.LanguageCode";
+        private const string UnconfiguredDefaultSegmentCode = "TRDCPAINT";
+        private const string UnconfiguredDefaultLanguageCode = "EN";
 
         public AzureConfigurationSettings()
         {
@@ -18,6 +22,12 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
                 Environment.GetEnvironmentVariable(CreateCustomerLoyaltyEndpointSettingName);
             EventGridTopicUri = Environment.GetEnvironmentVariable(EventGridTopicUriSettingName);
             EventGridTopicKey = Environment.GetEnvironmentVariable(EventGridTopicKeySettingName);
+
+            DefaultSegmentCode =
+                Environment.GetEnvironmentVariable(DefaultSegmentCodeSettingName) ?? UnconfiguredDefaultSegmentCode;
+
+            DefaultLanguageCode = Environment.GetEnvironmentVariable(DefaultLanguageCodeSettingName) ??
+                                  UnconfiguredDefaultLanguageCode;
 
             if (string.IsNullOrWhiteSpace(KeyVaultCertificateName))
             {
@@ -50,5 +60,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
         public string CreateCustomerLoyaltyEndpoint { get; }
         public string EventGridTopicUri { get; }
         public string EventGridTopicKey { get; }
+        public string DefaultSegmentCode { get; }
+        public string DefaultLanguageCode { get; }
     }
 }
