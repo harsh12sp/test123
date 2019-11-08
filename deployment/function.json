@@ -1,0 +1,146 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "appName":{
+            "type": "string",
+            "defaultValue": "dev-loyaltyv1-func-eastus"
+        },
+        "appServicePlanName":{
+            "type":"string"
+        },
+        "storageAccountName":{
+            "type": "string",
+            "defaultValue": ""
+        },
+        "appInsightsName":{
+            "type":"string"
+        },
+        "keyVaultBaseUri":{
+            "type":"string"
+        },
+        "vnetName":{
+            "type": "string"
+        },
+        "functionsSubnetName":{
+            "type": "string"
+        },
+        "eventGridKey":{
+            "type": "securestring"
+        },
+        "eventGridTopicUri":{
+            "type": "string"
+        }
+    },
+    "variables": {
+        "location": "[parameters('location')]",
+        "functionAppName": "[parameters('appName')]",
+        "hostingPlanName": "[parameters('appServicePlanName')]",
+        "storageAccountName": "[parameters('storageAccountName')]",
+        "appInsightsName": "[parameters('appInsightsName')]",
+        "keyVaultBaseUri": "[parameters('keyVaultBaseUri')]",
+        "functionsSubnetName":"[parameters('functionsSubnetName')]",
+        "vnetName":"[parameters('vnetName')]",
+        "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('functionsSubnetName'))]",
+        "eventGridTopicUri":"[parameters('eventGridTopicUri')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2014-04-01",
+            "name": "[variables('appInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "location": "[resourceGroup().location]",
+            "properties": {
+              "applicationId": "[variables('appInsightsName')]"
+            }
+          },
+        {
+            "apiVersion": "2016-03-01",
+            "type": "Microsoft.Web/sites",
+            "name": "[variables('functionAppName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
+            ],
+            "location": "[resourceGroup().location]",
+            "kind": "functionapp",
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~2"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },
+                        {
+                            "name": "EventGrid.Key",
+                            "value": "[parameters('eventGridKey')]"
+                          },
+                          {
+                            "name": "EventGrid.TopicUri",
+                            "value": "[variables('eventGridTopicUri')]"
+                          },
+                          {
+                            "name": "Hana.CreateCustomerLoyaltyEndpoint",
+                            "value": "https://bmcedwdevhana01.bmc.benjaminmoore1.com:4301/webapi/retailers/pos/loyalty_registration"
+                          },
+                        {
+                            "name": "KeyVault.BaseUri",
+                            "value": "[variables('keyVaultBaseUri')]"
+                        },
+                        {
+                            "name": "KeyVault.CertificateName",
+                            "value": "webapiuser"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(variables('functionAppName'))]"
+                        },
+                        {
+                            "name": "WEBSITE_LOAD_USER_PROFILE",
+                            "value": "1"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "10.14.1"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "type": "config",
+                    "apiVersion": "2018-02-01",
+                    "name": "virtualNetwork",
+                    "location": "[variables('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Web/sites/', variables('functionAppName'))]"
+                    ],
+                    "properties": {
+                        "subnetResourceId": "[variables('subnetResourceId')]",
+                        "swiftSupported": true
+                    }
+                }
+            ]
+        }
+    ]
+}

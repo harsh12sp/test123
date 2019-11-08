@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location":{
+            "value":"eastus"
+        },
+        "appName":{
+            "value": null
+        },
+        "appServicePlanName":{
+            "value": null
+        },
+        "storageAccountName":{
+            "value": null
+        },
+        "appInsightsName":{
+            "value": null
+        },
+        "keyVaultBaseUri":{
+            "value":null
+        },
+        "vnetName":{
+            "value":null
+        },
+        "functionsSubnetName":{
+            "value":null
+        }
+    }
+}
