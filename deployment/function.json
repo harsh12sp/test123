@@ -62,6 +62,9 @@
             "apiVersion": "2016-03-01",
             "type": "Microsoft.Web/sites",
             "name": "[variables('functionAppName')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
             ],
