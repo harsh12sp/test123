@@ -34,6 +34,10 @@
         },
         "eventGridTopicUri":{
             "type": "string"
+        },
+        "mutualTlsCertificateName":{
+            "type":"string",
+            "defaultValue":"webapiuser"
         }
     },
     "variables": {
@@ -46,7 +50,8 @@
         "functionsSubnetName":"[parameters('functionsSubnetName')]",
         "vnetName":"[parameters('vnetName')]",
         "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('functionsSubnetName'))]",
-        "eventGridTopicUri":"[parameters('eventGridTopicUri')]"
+        "eventGridTopicUri":"[parameters('eventGridTopicUri')]",
+        "mutualTlsCertificateName":"[parameters('mutualTlsCertificateName')]"
     },
     "resources": [
         {
@@ -108,7 +113,7 @@
                         },
                         {
                             "name": "KeyVault.CertificateName",
-                            "value": "webapiuser"
+                            "value": "[variables('mutualTlsCertificateName')]"
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
