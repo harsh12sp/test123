@@ -6,6 +6,9 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  BuildConfiguration: release
+
 steps:
 - task: DotNetCoreCLI@2
   displayName: 'Restore'
@@ -16,24 +19,24 @@ steps:
     vstsFeed: '4f92a9d6-ce6d-44de-a4d1-dd4c2f11f052'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Build'
   inputs:
-    displayName: 'Build'
     name: 'dotnetBuild'
     command: 'build'
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Test'
   inputs:
-    displayName: 'Test'
     name: 'dotnetTest'
     command: 'test'
     projects: '**/*[Tt]ests*/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage"'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Publish'
   inputs:
-    displayName: 'Publish'
     name: 'dotnetPublish'
     command: 'publish'
     publishWebProjects: false
@@ -41,8 +44,8 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
 
 - task: PublishBuildArtifacts@1
+  displayName: 'Publish Build Artifacts'
   inputs:
-    displayName: 'Publish Build Artifacts'
     name: 'publishBuildArtifacts'
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
