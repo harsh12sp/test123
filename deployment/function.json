@@ -41,16 +41,7 @@
         }
     },
     "variables": {
-        "location": "[parameters('location')]",
-        "functionAppName": "[parameters('appName')]",
-        "hostingPlanName": "[parameters('appServicePlanName')]",
-        "storageAccountName": "[parameters('storageAccountName')]",
-        "appInsightsName": "[parameters('appInsightsName')]",
-        "keyVaultBaseUri": "[parameters('keyVaultBaseUri')]",
-        "functionsSubnetName":"[parameters('functionsSubnetName')]",
-        "vnetName":"[parameters('vnetName')]",
-        "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('functionsSubnetName'))]",
-        "eventGridTopicUri":"[parameters('eventGridTopicUri')]",
+        "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('functionsSubnetName'))]",
         "mutualTlsCertificateName":"[parameters('mutualTlsCertificateName')]"
     },
     "resources": [
@@ -69,36 +60,36 @@
           },
         {
             "apiVersion": "2014-04-01",
-            "name": "[variables('appInsightsName')]",
+            "name": "[parameters('appInsightsName')]",
             "type": "Microsoft.Insights/components",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('location')]",
             "properties": {
-              "applicationId": "[variables('appInsightsName')]"
+              "applicationId": "[parameters('appInsightsName')]"
             }
           },
         {
             "apiVersion": "2016-03-01",
             "type": "Microsoft.Web/sites",
-            "name": "[variables('functionAppName')]",
+            "name": "[parameters('appName')]",
             "identity": {
                 "type": "SystemAssigned"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
+                "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
             ],
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('location')]",
             "kind": "functionapp",
             "properties": {
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
                 "siteConfig": {
                     "appSettings": [
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]"
+                            "value": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]"
                         },
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),'2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -114,7 +105,7 @@
                           },
                           {
                             "name": "EventGrid.TopicUri",
-                            "value": "[variables('eventGridTopicUri')]"
+                            "value": "[parameters('eventGridTopicUri')]"
                           },
                           {
                             "name": "Hana.CreateCustomerLoyaltyEndpoint",
@@ -122,19 +113,19 @@
                           },
                         {
                             "name": "KeyVault.BaseUri",
-                            "value": "[variables('keyVaultBaseUri')]"
+                            "value": "[parameters('keyVaultBaseUri')]"
                         },
                         {
                             "name": "KeyVault.CertificateName",
-                            "value": "[variables('mutualTlsCertificateName')]"
+                            "value": "[parameters('mutualTlsCertificateName')]"
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),'2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[toLower(variables('functionAppName'))]"
+                            "value": "[toLower(parameters('appName'))]"
                         },
                         {
                             "name": "WEBSITE_LOAD_USER_PROFILE",
@@ -152,9 +143,9 @@
                     "type": "config",
                     "apiVersion": "2018-02-01",
                     "name": "virtualNetwork",
-                    "location": "[variables('location')]",
+                    "location": "[parameters('location')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/sites/', variables('functionAppName'))]"
+                        "[concat('Microsoft.Web/sites/', parameters('appName'))]"
                     ],
                     "properties": {
                         "subnetResourceId": "[variables('subnetResourceId')]",
