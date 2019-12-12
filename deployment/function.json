@@ -41,8 +41,7 @@
         }
     },
     "variables": {
-        "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('functionsSubnetName'))]",
-        "mutualTlsCertificateName":"[parameters('mutualTlsCertificateName')]"
+        "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('functionsSubnetName'))]"
     },
     "resources": [
         {
