@@ -77,6 +77,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
             response.EnsureSuccessStatusCode();
 
             HanaXjsCreateLoyaltyResponse hanaXjsPayload = await response.Content.ReadAsAsync<HanaXjsCreateLoyaltyResponse>();
+            
+            customer.LoyaltyIndicator = hanaXjsPayload.LoyaltyIndicator;
 
             await _customerEventPublisher.Publish(c => new EventGridEvent
             {
