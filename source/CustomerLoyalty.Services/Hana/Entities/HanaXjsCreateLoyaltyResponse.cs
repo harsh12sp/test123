@@ -9,5 +9,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities
 
         [JsonProperty("loyalty_indicator")]
         public string LoyaltyIndicator { get; set; }
+
+        [JsonProperty("segment_code")]
+        public string SegmentCode {get; set;}
     }
 }
