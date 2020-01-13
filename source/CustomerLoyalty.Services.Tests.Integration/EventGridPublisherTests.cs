@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Threading.Tasks;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
@@ -46,6 +46,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integratio
                 State = "NJ";
                 LoyaltyEmailAddress = "test@test.test";
                 PostalCode = "12345";
+                LoyaltyIndicator = "Y";         
             }
         }
     }
