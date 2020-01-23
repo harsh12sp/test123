@@ -25,6 +25,8 @@
         },
         "functionsSubnetName":{
             "value":null
+        },
+        "hanaCreateCustomerLoyaltyEndpoint":{
+            "value":null
         }
-    }
 }
