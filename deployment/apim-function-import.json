@@ -44,7 +44,7 @@
                 "credentials": {
                     "header": {
                         "x-functions-key": [
-                            "{{dev-loyaltyv1-func-eastus-key}}"
+                            "{{function-key}}"
                         ]
                     }
                 }
