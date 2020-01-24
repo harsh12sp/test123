@@ -9,16 +9,14 @@
            "type": "string"
         },
         "apimBackendName": {
-           "type": "string",
-           "defaultValue":"dev-loyaltyv1-func-eastus"
+           "type": "string"
         },
         "functionAppName": {
            "type": "string",
            "defaultValue": "dev-loyaltyv1-func-eastus"
         },
         "functionHostKey": {
-           "type": "securestring",
-           "defaultValue": "c8spWjlqeLUNHNj8jmenwFaZn2VU4cdWXD215DMP6M5STuffLQgE/A=="
+           "type": "securestring"
         },
         "functionAppUri": {
            "type": "string",
@@ -46,7 +44,7 @@
                 "credentials": {
                     "header": {
                         "x-functions-key": [
-                            "{{dev-loyaltyv1-func-eastus-key}}"
+                            "{{function-key}}"
                         ]
                     }
                 }
