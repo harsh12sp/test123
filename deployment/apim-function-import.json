@@ -56,7 +56,7 @@
             "condition":"[equals(variables('deployToApiManagement'), 'true')]",
             "type": "Microsoft.ApiManagement/service/properties",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('apimServiceName'), '/function-key')]",
+            "name": "[concat(parameters('apimServiceName'), '/dev-loyaltyv1-func-eastus-key')]",
             "properties": {
                 "displayName": "dev-loyaltyv1-func-eastus-key",
                 "value": "[parameters('functionHostKey')]",
