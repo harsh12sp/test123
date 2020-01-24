@@ -166,5 +166,11 @@
                 }
             ]
         }
-    ]
+    ],
+    "outputs": {
+        "functionKeys": {
+            "type": "object",
+            "value": "[listkeys(concat(resourceId('Microsoft.Web/sites', variables('functionAppName')), '/host/default'), '2018-11-01')]"
+        }
+    }
 }
