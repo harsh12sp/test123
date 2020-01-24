@@ -54,9 +54,9 @@
             "condition":"[equals(variables('deployToApiManagement'), 'true')]",
             "type": "Microsoft.ApiManagement/service/properties",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('apimServiceName'), '/',parameters('functionAppName'))]",
+            "name": "[concat(parameters('apimServiceName'), '/',parameters('functionAppName'),'-key')]",
             "properties": {
-                "displayName": "[parameters('functionAppName')]",
+                "displayName": "[concat(parameters('functionAppName'),'-key')]",
                 "value": "[parameters('functionHostKey')]",
                 "tags": [
                     "key",
