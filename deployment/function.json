@@ -38,6 +38,9 @@
         "mutualTlsCertificateName":{
             "type":"string",
             "defaultValue":"webapiuser"
+        },
+        "hanaCreateCustomerLoyaltyEndpoint":{
+            "type": "string"
         }
     },
     "variables": {
@@ -118,7 +121,7 @@
                           },
                           {
                             "name": "Hana.CreateCustomerLoyaltyEndpoint",
-                            "value": "https://bmcedwdevhana01.bmc.benjaminmoore1.com:4301/webapi/retailers/pos/loyalty_registration"
+                            "value": "[parameters('hanaCreateCustomerLoyaltyEndpoint')]"
                           },
                         {
                             "name": "KeyVault.BaseUri",
@@ -163,5 +166,11 @@
                 }
             ]
         }
-    ]
+    ],
+    "outputs": {
+        "functionKeys": {
+            "type": "object",
+            "value": "[listkeys(concat(resourceId('Microsoft.Web/sites', variables('functionAppName')), '/host/default'), '2018-11-01')]"
+        }
+    }
 }

@@ -1,0 +1,111 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apimServiceName": {
+            "type": "string"
+        },
+        "apimApi": {
+           "type": "string"
+        },
+        "apimBackendName": {
+           "type": "string"
+        },
+        "functionAppName": {
+           "type": "string",
+           "defaultValue": "dev-loyaltyv1-func-eastus"
+        },
+        "functionHostKey": {
+           "type": "securestring"
+        },
+        "functionAppUri": {
+           "type": "string",
+           "defaultValue": "https://dev-loyaltyv1-func-eastus.azurewebsites.net"
+        },
+        "deployToApiManagement": {
+            "type":"string",
+            "defaultValue":"false"
+        }
+    },
+    "variables": {
+        "functionAppResourceId": "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]",
+        "deployToApiManagement":"[parameters('deployToApiManagement')]"
+    },
+    "resources": [
+        {
+            "condition":"[equals(variables('deployToApiManagement'), 'true')]",
+            "type": "Microsoft.ApiManagement/service/backends",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('apimServiceName'), '/', parameters('apimBackendName'))]",
+            "properties": {
+                "url": "[parameters('functionAppUri')]",
+                "protocol": "http",
+                "resourceId": "[concat('https://management.azure.com', variables('functionAppResourceId'))]",
+                "credentials": {
+                    "header": {
+                        "x-functions-key": [
+                            "{{function-key}}"
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "condition":"[equals(variables('deployToApiManagement'), 'true')]",
+            "type": "Microsoft.ApiManagement/service/properties",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('apimServiceName'), '/',parameters('functionAppName'),'-key')]",
+            "properties": {
+                "displayName": "[concat(parameters('functionAppName'),'-key')]",
+                "value": "[parameters('functionHostKey')]",
+                "tags": [
+                    "key",
+                    "function",
+                    "auto"
+                ],
+                "secret": true
+            }
+        },
+        {
+            "condition":"[equals(variables('deployToApiManagement'), 'true')]",
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('apimServiceName'), '/', parameters('apimApi'), '/post-customerloyalty')]",
+            "properties": {
+                "displayName": "CreateCustomerloyalty",
+                "method": "POST",
+                "urlTemplate": "/customerloyalty",
+                "templateParameters": [],
+                "request": {
+                    "queryParameters": [
+                        {
+                            "name": "version",
+                            "type": "string",
+                            "defaultValue": "v1.0",
+                            "required": true,
+                            "values": [
+                                "v1.0"
+                            ]
+                        }
+                    ],
+                    "headers": [],
+                    "representations": []
+                },
+                "responses": []
+            }
+        },
+        {
+            "condition":"[equals(variables('deployToApiManagement'), 'true')]",
+            "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('apimServiceName'), '/', parameters('apimApi'), '/post-customerloyalty/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimServiceName'), parameters('apimApi'), 'post-customerloyalty')]"
+            ],
+            "properties": {
+                "value":"[concat('<policies>\r\n  <inbound>\r\n    <choose>\r\n      <when condition=\"@(context.Request.Url.Query.GetValueOrDefault(&quot;version&quot;) == &quot;v1.0&quot;)\">\r\n        <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('apimBackendName'), '\" />\r\n        <!--<authentication-managed-identity resource=\"', parameters('functionAppUri'), '\" ignore-error=\"false\" />-->\r\n      </when>\r\n      <otherwise>\r\n        <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('apimBackendName'), '\" />\r\n        <!--<authentication-managed-identity resource=\"', parameters('functionAppUri'), '\" ignore-error=\"false\" />-->\r\n      </otherwise>\r\n    </choose>\r\n    <base />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
+                "format": "xml"
+            }
+        }
+    ]
+}
