@@ -58,7 +58,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities
         [JsonProperty("language_code")]
         public string LanguageCode { get; set; }
 
-        [JsonProperty("loyalty_indicator")]
-        public string LoyaltyIndicator { get; set; }
+        [JsonProperty("biw_existing")]
+        public string BiwExisting {get; set;}
     }
 }

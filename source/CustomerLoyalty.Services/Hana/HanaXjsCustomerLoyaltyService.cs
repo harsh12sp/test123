@@ -50,18 +50,12 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
                 PostalCode = customer.PostalCode,
                 RetailerId = customer.RetailerId,
                 State = customer.State,
-                SegmentCode = customer.SegmentCode,
                 LanguageCode = customer.LanguageCode
             };
 
-            if (string.IsNullOrWhiteSpace(customerLoyaltyRequest.SegmentCode))
-            {
-                customerLoyaltyRequest.SegmentCode = _configurationSettings.DefaultSegmentCode;
-            }
-
             if (string.IsNullOrWhiteSpace(customerLoyaltyRequest.LanguageCode))
             {
-                customerLoyaltyRequest.SegmentCode = _configurationSettings.DefaultLanguageCode;
+                customerLoyaltyRequest.LanguageCode = _configurationSettings.DefaultLanguageCode;
             }
 
             HttpClient client = await _httpClientFactory.CreateHttpClient();
@@ -78,8 +72,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
 
             HanaXjsCreateLoyaltyResponse hanaXjsPayload = await response.Content.ReadAsAsync<HanaXjsCreateLoyaltyResponse>();
             
-            customer.LoyaltyIndicator = hanaXjsPayload.LoyaltyIndicator;
             customer.SegmentCode = hanaXjsPayload.SegmentCode;
+            customer.BiwExisting = hanaXjsPayload.BiwExisting;
 
             await _customerEventPublisher.Publish(c => new EventGridEvent
             {

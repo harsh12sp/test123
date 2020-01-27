@@ -77,9 +77,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
                 PostalCode = "12345",
                 RetailerId = "AG1R",
                 State = "NY",
-                SegmentCode = "1234",
-                LanguageCode = "EN",
-                LoyaltyIndicator="Y"
+                LanguageCode = "EN"
             });
 
             // Arrange
@@ -125,9 +123,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
                 PostalCode = "12345",
                 RetailerId = "AG1R",
                 State = "NY",
-                SegmentCode = "1234",
-                LanguageCode = "EN",
-                LoyaltyIndicator="N"
+                LanguageCode = "EN"
             });
 
             using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(customer)))
