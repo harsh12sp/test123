@@ -22,13 +22,13 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities
 
         [JsonProperty("last_name")] public string LastName { get; set; }
 
-        [JsonProperty("address_line_1")] public string Address1 { get; set; }
+        [JsonProperty("address_line1")] public string Address1 { get; set; }
 
-        [JsonProperty("address_line_2")] public string Address2 { get; set; }
+        [JsonProperty("address_line2")] public string Address2 { get; set; }
 
         [JsonProperty("city")] public string City { get; set; }
 
-        [JsonProperty("state")] public string State { get; set; }
+        [JsonProperty("state_code")] public string State { get; set; }
 
         [JsonProperty("zip")] public string PostalCode { get; set; }
 
@@ -39,9 +39,6 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities
         [JsonProperty("contact_email_id")] public string ContactEmailAddress { get; set; }
 
         [JsonProperty("contact_phone_number")] public string ContactPhoneNumber { get; set; }
-
-        [JsonProperty("segment_code")]
-        public string SegmentCode { get; set; }
 
         [JsonProperty("language_code")]
         public string LanguageCode { get; set; }

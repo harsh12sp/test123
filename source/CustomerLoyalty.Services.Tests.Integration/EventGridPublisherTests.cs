@@ -46,7 +46,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integratio
                 State = "NJ";
                 LoyaltyEmailAddress = "test@test.test";
                 PostalCode = "12345";
-                LoyaltyIndicator = "Y";         
+                BiwExisting = "false";         
             }
         }
     }

@@ -12,5 +12,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities
 
         [JsonProperty("segment_code")]
         public string SegmentCode {get; set;}
+
+        [JsonProperty("biw_existing")]
+        public string BiwExisting {get; set;}
     }
 }
