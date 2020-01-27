@@ -36,10 +36,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
             _configurationSettingsMock.SetupGet(setup => setup.CreateCustomerLoyaltyEndpoint)
                 .Returns("https://mock.local");
 
-            _configurationSettingsMock.SetupGet(setup => setup.DefaultSegmentCode)
-                .Returns("DSC");
-
-            _configurationSettingsMock.SetupGet(setup => setup.DefaultSegmentCode)
+            _configurationSettingsMock.SetupGet(setup => setup.DefaultLanguageCode)
                 .Returns("DLG");
 
             _customerLoyaltyService =
@@ -167,25 +164,6 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task CreateCustomerLoyalty_WhenCustomerIsMissingSegmentCode_ShouldUseDefaultCode(string code)
-        {
-            _httpClientFactoryMock.Setup(setup => setup.CreateHttpClient())
-                .ReturnsAsync(new TestHttpClient(
-                    new StatusCodeMessageHandler<HanaXjsCreateLoyaltyResponse>(HttpStatusCode.OK,
-                        new HanaXjsCreateLoyaltyResponse())));
-
-            CustomerLoyaltyIndicator customerLoyaltyIndicator =
-                await _customerLoyaltyService.CreateCustomerLoyalty(new Customer{SegmentCode = code});
-
-            _configurationSettingsMock.VerifyGet(verify=>verify.DefaultSegmentCode, Times.Once);
-
-            Assert.NotNull(customerLoyaltyIndicator);
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
         public async Task CreateCustomerLoyalty_WhenCustomerIsMissingLanguageCode_ShouldUseDefaultCode(string code)
         {
             _httpClientFactoryMock.Setup(setup => setup.CreateHttpClient())
@@ -197,22 +175,6 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
                 await _customerLoyaltyService.CreateCustomerLoyalty(new Customer{LanguageCode = code});
 
             _configurationSettingsMock.VerifyGet(verify => verify.DefaultLanguageCode, Times.Once);
-
-            Assert.NotNull(customerLoyaltyIndicator);
-        }
-
-        [Fact]
-        public async Task CreateCustomerLoyalty_WhenCustomerSegmentCodeIsProvided_ShouldNotUseDefaultCode()
-        {
-            _httpClientFactoryMock.Setup(setup => setup.CreateHttpClient())
-                .ReturnsAsync(new TestHttpClient(
-                    new StatusCodeMessageHandler<HanaXjsCreateLoyaltyResponse>(HttpStatusCode.OK,
-                        new HanaXjsCreateLoyaltyResponse())));
-
-            CustomerLoyaltyIndicator customerLoyaltyIndicator =
-                await _customerLoyaltyService.CreateCustomerLoyalty(new Customer{SegmentCode = "Test"});
-
-            _configurationSettingsMock.VerifyGet(verify => verify.DefaultSegmentCode, Times.Never);
 
             Assert.NotNull(customerLoyaltyIndicator);
         }
