@@ -44,7 +44,7 @@
                 "credentials": {
                     "header": {
                         "x-functions-key": [
-                            "{{function-key}}"
+                            "{{[concat(parameters('functionAppName'),'-key')]}}"
                         ]
                     }
                 }
