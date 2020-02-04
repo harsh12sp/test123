@@ -44,7 +44,7 @@
                 "credentials": {
                     "header": {
                         "x-functions-key": [
-                            "[concat(parameters('functionAppName'),'-key')]"
+                            "{{loyalty-function-key}}"
                         ]
                     }
                 }
@@ -54,9 +54,9 @@
             "condition":"[equals(variables('deployToApiManagement'), 'true')]",
             "type": "Microsoft.ApiManagement/service/properties",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('apimServiceName'), '/',parameters('functionAppName'),'-key')]",
+            "name": "[concat(parameters('apimServiceName'), '/','loyalty-function-key')]",
             "properties": {
-                "displayName": "[concat(parameters('functionAppName'),'-key')]",
+                "displayName": "loyalty-function-key",
                 "value": "[parameters('functionHostKey')]",
                 "tags": [
                     "key",
