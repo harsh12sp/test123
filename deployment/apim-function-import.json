@@ -54,7 +54,7 @@
             "condition":"[equals(variables('deployToApiManagement'), 'true')]",
             "type": "Microsoft.ApiManagement/service/properties",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('apimServiceName'), '/','loyalty-function-key')]",
+            "name": "[concat(parameters('apimServiceName'), '/loyalty-function-key')]",
             "properties": {
                 "displayName": "loyalty-function-key",
                 "value": "[parameters('functionHostKey')]",
