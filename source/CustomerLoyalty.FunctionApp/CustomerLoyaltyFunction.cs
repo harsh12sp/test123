@@ -1,16 +1,16 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using BenjaminMoore.Api.Retail.Pos.Common.Diagnostics;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
 {
@@ -70,6 +70,10 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
             catch (FunctionTimerException ex) when (ex.InnerException is IOException ioException)
             {
                 return new BadRequestObjectResult(ioException.Message);
+            }
+            catch (Exception)
+            {
+                return new BadRequestObjectResult("Unable to process request");
             }
         }
     }
