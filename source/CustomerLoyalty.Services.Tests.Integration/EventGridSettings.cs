@@ -6,7 +6,7 @@
         public string Uri { get; set; }
         public string KeyVaultCertificateName => "Missing";
         public string KeyVaultBaseUri => "Missing";
-        public string CreateCustomerLoyaltyEndpoint => "Missing";
+        public string CreateCustomerLoyaltyHanaBaseUrl => "Missing";
         public string EventGridTopicUri => Uri;
         public string EventGridTopicKey => Token;
         public string DefaultSegmentCode => "Missing";

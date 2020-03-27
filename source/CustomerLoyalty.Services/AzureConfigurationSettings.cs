@@ -6,7 +6,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
     {
         public const string KeyValueCertificateNameSettingName = "KeyVault.CertificateName";
         public const string KeyVaultBaseUriSettingName = "KeyVault.BaseUri";
-        public const string CreateCustomerLoyaltyEndpointSettingName = "Hana.CreateCustomerLoyaltyEndpoint";
+        public const string CreateCustomerLoyaltyHanaBaseUrlSettingName = "Hana.CreateCustomerLoyaltyBaseUrl";
         public const string EventGridTopicUriSettingName = "EventGrid.TopicUri";
         public const string EventGridTopicKeySettingName = "EventGrid.Key";
         public const string DefaultSegmentCodeSettingName = "Defaults.SegmentCode";
@@ -18,8 +18,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
         {
             KeyVaultCertificateName = Environment.GetEnvironmentVariable(KeyValueCertificateNameSettingName);
             KeyVaultBaseUri = Environment.GetEnvironmentVariable(KeyVaultBaseUriSettingName);
-            CreateCustomerLoyaltyEndpoint =
-                Environment.GetEnvironmentVariable(CreateCustomerLoyaltyEndpointSettingName);
+            CreateCustomerLoyaltyHanaBaseUrl =
+                Environment.GetEnvironmentVariable(CreateCustomerLoyaltyHanaBaseUrlSettingName);
             EventGridTopicUri = Environment.GetEnvironmentVariable(EventGridTopicUriSettingName);
             EventGridTopicKey = Environment.GetEnvironmentVariable(EventGridTopicKeySettingName);
 
@@ -39,9 +39,9 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
                 throw new ArgumentNullException(KeyVaultBaseUriSettingName);
             }
 
-            if (string.IsNullOrWhiteSpace(CreateCustomerLoyaltyEndpoint))
+            if (string.IsNullOrWhiteSpace(CreateCustomerLoyaltyHanaBaseUrl))
             {
-                throw new ArgumentNullException(CreateCustomerLoyaltyEndpointSettingName);
+                throw new ArgumentNullException(CreateCustomerLoyaltyHanaBaseUrlSettingName);
             }
 
             if (string.IsNullOrWhiteSpace(EventGridTopicUri))
@@ -57,7 +57,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
 
         public string KeyVaultCertificateName { get; }
         public string KeyVaultBaseUri { get; }
-        public string CreateCustomerLoyaltyEndpoint { get; }
+        public string CreateCustomerLoyaltyHanaBaseUrl { get; }
         public string EventGridTopicUri { get; }
         public string EventGridTopicKey { get; }
         public string DefaultSegmentCode { get; }

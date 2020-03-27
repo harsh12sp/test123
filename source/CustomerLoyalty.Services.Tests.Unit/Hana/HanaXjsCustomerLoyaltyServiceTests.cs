@@ -33,7 +33,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
             _configurationSettingsMock = new Mock<IConfigurationSettings>();
             _customerPublisherMock = new Mock<IEventPublisher<Customer>>();
 
-            _configurationSettingsMock.SetupGet(setup => setup.CreateCustomerLoyaltyEndpoint)
+            _configurationSettingsMock.SetupGet(setup => setup.CreateCustomerLoyaltyHanaBaseUrl)
                 .Returns("https://mock.local");
 
             _configurationSettingsMock.SetupGet(setup => setup.DefaultLanguageCode)
@@ -108,7 +108,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
             await _customerLoyaltyService.CreateCustomerLoyalty(new Customer());
 
             // Assert
-            _configurationSettingsMock.VerifyGet(verify => verify.CreateCustomerLoyaltyEndpoint, Times.Once);
+            _configurationSettingsMock.VerifyGet(verify => verify.CreateCustomerLoyaltyHanaBaseUrl, Times.Once);
         }
 
         [Fact]
