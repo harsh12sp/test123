@@ -120,7 +120,7 @@
                             "value": "[variables('eventGridTopicUri')]"
                           },
                           {
-                            "name": "Hana.CreateCustomerLoyaltyEndpoint",
+                            "name": "Hana.CreateCustomerLoyaltyBaseUrl",
                             "value": "[parameters('hanaCreateCustomerLoyaltyEndpoint')]"
                           },
                         {
