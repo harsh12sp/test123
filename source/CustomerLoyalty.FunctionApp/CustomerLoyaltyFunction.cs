@@ -17,6 +17,10 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
     public class CustomerLoyaltyFunction
     {
         private readonly ICustomerLoyaltyService _customerLoyaltyService;
+        private const string ErrorCode = "req_process_failed";
+        private const string ErrorMessage = "Unable to process request";
+        private const string ErrorDetails = "Error occurred while processing request.";
+        private const string ErrorTarget = "generic_exception";
 
         public CustomerLoyaltyFunction(ICustomerLoyaltyService customerLoyaltyService)
         {
@@ -71,9 +75,22 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
             {
                 return new BadRequestObjectResult(ioException.Message);
             }
-            catch (Exception)
+            catch (FunctionTimerException ex) when (ex.InnerException is Exception)
             {
-                return new BadRequestObjectResult("Unable to process request");
+                CustomError errors = new CustomError
+                {
+                    Code = ErrorCode,
+                    Message = ErrorMessage,
+                    Details = ErrorDetails,
+                    Target = ErrorTarget
+                };
+
+                return new BadRequestObjectResult(
+                    new ErrorInfo
+                    {
+                        Errors = JObject.Parse(JsonConvert.SerializeObject(errors)),
+                        ResponseInfo = new ResponseMetadata { ResponseTime = $"{ex.ExecutionTime.TotalMilliseconds}ms" }
+                    });
             }
         }
     }
