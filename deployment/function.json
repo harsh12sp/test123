@@ -39,7 +39,7 @@
             "type":"string",
             "defaultValue":"webapiuser"
         },
-        "hanaCreateCustomerLoyaltyEndpoint":{
+        "hanaCreateCustomerLoyaltyBaseUrl":{
             "type": "string"
         }
     },
@@ -120,8 +120,8 @@
                             "value": "[variables('eventGridTopicUri')]"
                           },
                           {
-                            "name": "Hana.CreateCustomerLoyaltyEndpoint",
-                            "value": "[parameters('hanaCreateCustomerLoyaltyEndpoint')]"
+                            "name": "Hana.CreateCustomerLoyaltyBaseUrl",
+                            "value": "[parameters('hanaCreateCustomerLoyaltyBaseUrl')]"
                           },
                         {
                             "name": "KeyVault.BaseUri",
