@@ -36,6 +36,9 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
             _configurationSettingsMock.SetupGet(setup => setup.CreateCustomerLoyaltyHanaBaseUrl)
                 .Returns("https://mock.local");
 
+            _configurationSettingsMock.SetupGet(setup => setup.CreateCustomerLoyaltyHanaEndPoint)
+                .Returns("webapi/retailers/pos/loyalty_registration");
+
             _configurationSettingsMock.SetupGet(setup => setup.DefaultLanguageCode)
                 .Returns("DLG");
 
@@ -109,6 +112,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
 
             // Assert
             _configurationSettingsMock.VerifyGet(verify => verify.CreateCustomerLoyaltyHanaBaseUrl, Times.Once);
+            _configurationSettingsMock.VerifyGet(verify => verify.CreateCustomerLoyaltyHanaEndPoint, Times.Once);
         }
 
         [Fact]

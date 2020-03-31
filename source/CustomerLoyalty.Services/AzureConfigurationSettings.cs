@@ -7,6 +7,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
         public const string KeyValueCertificateNameSettingName = "KeyVault.CertificateName";
         public const string KeyVaultBaseUriSettingName = "KeyVault.BaseUri";
         public const string CreateCustomerLoyaltyHanaBaseUrlSettingName = "Hana.CreateCustomerLoyaltyBaseUrl";
+        public const string CreateCustomerLoyaltyHanaEndPointSettingName = "Hana.CreateCustomerLoyaltyEndPoint";
         public const string EventGridTopicUriSettingName = "EventGrid.TopicUri";
         public const string EventGridTopicKeySettingName = "EventGrid.Key";
         public const string DefaultSegmentCodeSettingName = "Defaults.SegmentCode";
@@ -20,6 +21,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
             KeyVaultBaseUri = Environment.GetEnvironmentVariable(KeyVaultBaseUriSettingName);
             CreateCustomerLoyaltyHanaBaseUrl =
                 Environment.GetEnvironmentVariable(CreateCustomerLoyaltyHanaBaseUrlSettingName);
+            CreateCustomerLoyaltyHanaEndPoint =
+                Environment.GetEnvironmentVariable(CreateCustomerLoyaltyHanaEndPointSettingName);
             EventGridTopicUri = Environment.GetEnvironmentVariable(EventGridTopicUriSettingName);
             EventGridTopicKey = Environment.GetEnvironmentVariable(EventGridTopicKeySettingName);
 
@@ -44,6 +47,11 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
                 throw new ArgumentNullException(CreateCustomerLoyaltyHanaBaseUrlSettingName);
             }
 
+            if (string.IsNullOrWhiteSpace(CreateCustomerLoyaltyHanaEndPoint))
+            {
+                throw new ArgumentNullException(CreateCustomerLoyaltyHanaEndPointSettingName);
+            }
+
             if (string.IsNullOrWhiteSpace(EventGridTopicUri))
             {
                 throw new ArgumentNullException(EventGridTopicUriSettingName);
@@ -62,5 +70,6 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
         public string EventGridTopicKey { get; }
         public string DefaultSegmentCode { get; }
         public string DefaultLanguageCode { get; }
+        public string CreateCustomerLoyaltyHanaEndPoint { get; }
     }
 }

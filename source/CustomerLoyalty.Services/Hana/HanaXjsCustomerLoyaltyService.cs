@@ -59,8 +59,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
             }
 
             HttpClient client = await _httpClientFactory.CreateHttpClient();
-            string createCustomerLoyaltyEndpoint = _configurationSettings.CreateCustomerLoyaltyHanaBaseUrl + 
-                                                                                "/webapi/retailers/pos/loyalty_registration";
+            string createCustomerLoyaltyEndpoint = _configurationSettings.CreateCustomerLoyaltyHanaBaseUrl + "/" +
+                                                                                _configurationSettings.CreateCustomerLoyaltyHanaEndPoint;
             HttpResponseMessage response = await client.PostAsJsonAsync(createCustomerLoyaltyEndpoint, customerLoyaltyRequest);
 
             if (!response.IsSuccessStatusCode && response.StatusCode == HttpStatusCode.BadRequest)
