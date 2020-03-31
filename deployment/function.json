@@ -41,6 +41,10 @@
         },
         "hanaCreateCustomerLoyaltyBaseUrl":{
             "type": "string"
+        },
+        "hanaCreateCustomerLoyaltyEndPoint":{
+            "type":"string",
+            "defaultValue":"webapi/retailers/pos/loyalty_registration"
         }
     },
     "variables": {
@@ -123,6 +127,10 @@
                             "name": "Hana.CreateCustomerLoyaltyBaseUrl",
                             "value": "[parameters('hanaCreateCustomerLoyaltyBaseUrl')]"
                           },
+                         {
+                            "name": "Hana.CreateCustomerLoyaltyEndPoint",
+                            "value": "[parameters('hanaCreateCustomerLoyaltyEndPoint')]"
+                        },
                         {
                             "name": "KeyVault.BaseUri",
                             "value": "[variables('keyVaultBaseUri')]"
