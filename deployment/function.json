@@ -44,7 +44,7 @@
         },
         "HanaCreateCustomerLoyaltyEndPoint":{
             "type":"string",
-            "defaultValue":"/webapi/retailers/pos/loyalty_registration"
+            "defaultValue":"webapi/retailers/pos/loyalty_registration"
         }
     },
     "variables": {
