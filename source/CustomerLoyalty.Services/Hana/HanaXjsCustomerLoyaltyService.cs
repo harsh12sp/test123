@@ -1,12 +1,12 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using BenjaminMoore.Api.Retail.Pos.Common.Http;
+﻿using BenjaminMoore.Api.Retail.Pos.Common.Http;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
 using Microsoft.Azure.EventGrid.Models;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
 {
@@ -63,16 +63,23 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
                                                                                 _configurationSettings.CreateCustomerLoyaltyHanaEndPoint;
             HttpResponseMessage response = await client.PostAsJsonAsync(createCustomerLoyaltyEndpoint, customerLoyaltyRequest);
 
-            if (!response.IsSuccessStatusCode && response.StatusCode == HttpStatusCode.BadRequest)
+            if (!response.IsSuccessStatusCode)
             {
-                string body = await response.Content.ReadAsStringAsync();
-                throw new HanaRequestException(body);
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    string body = await response.Content.ReadAsStringAsync();
+                    throw new HanaRequestException(body);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
 
             response.EnsureSuccessStatusCode();
 
             HanaXjsCreateLoyaltyResponse hanaXjsPayload = await response.Content.ReadAsAsync<HanaXjsCreateLoyaltyResponse>();
-            
+
             customer.SegmentCode = hanaXjsPayload.SegmentCode;
             customer.BiwExisting = hanaXjsPayload.BiwExisting;
 
