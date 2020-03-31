@@ -4,7 +4,8 @@
     {
         string KeyVaultCertificateName { get; }
         string KeyVaultBaseUri { get; }
-        string CreateCustomerLoyaltyEndpoint { get; }
+        string CreateCustomerLoyaltyHanaBaseUrl { get; }
+        string CreateCustomerLoyaltyHanaEndPoint { get; }
         string EventGridTopicUri { get; }
         string EventGridTopicKey { get; }
         string DefaultSegmentCode { get; }

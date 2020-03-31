@@ -26,8 +26,11 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
 
             Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyVaultBaseUriSettingName, AzureConfigurationSettings.KeyVaultBaseUriSettingName);
 
-            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName,
-                AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName);
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName,
+                AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName,
+                AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName);
 
             Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyValueCertificateNameSettingName, AzureConfigurationSettings.KeyValueCertificateNameSettingName);
 
@@ -38,7 +41,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
             AzureConfigurationSettings settings = new AzureConfigurationSettings();
 
             Assert.Equal(settings.KeyVaultBaseUri, AzureConfigurationSettings.KeyVaultBaseUriSettingName);
-            Assert.Equal(settings.CreateCustomerLoyaltyEndpoint, AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName);
+            Assert.Equal(settings.CreateCustomerLoyaltyHanaBaseUrl, AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName);
+            Assert.Equal(settings.CreateCustomerLoyaltyHanaEndPoint, AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName);
             Assert.Equal(settings.KeyVaultCertificateName, AzureConfigurationSettings.KeyValueCertificateNameSettingName);
             Assert.Equal(settings.EventGridTopicKey, AzureConfigurationSettings.EventGridTopicKeySettingName);
             Assert.Equal(settings.EventGridTopicUri, AzureConfigurationSettings.EventGridTopicUriSettingName);
@@ -50,8 +54,11 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
 
             Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyVaultBaseUriSettingName, AzureConfigurationSettings.KeyVaultBaseUriSettingName);
 
-            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName,
-                AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName);
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName,
+                AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName,
+                AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName);
 
             Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyValueCertificateNameSettingName, AzureConfigurationSettings.KeyValueCertificateNameSettingName);
 
@@ -73,8 +80,11 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
 
             Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyVaultBaseUriSettingName, AzureConfigurationSettings.KeyVaultBaseUriSettingName);
 
-            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName,
-                AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName);
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName,
+                AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName);
+
+            Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName,
+                AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName);
 
             Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyValueCertificateNameSettingName, AzureConfigurationSettings.KeyValueCertificateNameSettingName);
 
@@ -111,28 +121,49 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
                 };
 
 
+                // knockout config for baseUrl
+                yield return new object[]
+                {
+                    new Action(() =>
+                        KnockoutEnvironmentVariable(AzureConfigurationSettings
+                            .CreateCustomerLoyaltyHanaBaseUrlSettingName, ""))
+                };
+
+                yield return new object[]
+                {
+                    new Action(() =>
+                        KnockoutEnvironmentVariable(AzureConfigurationSettings
+                            .CreateCustomerLoyaltyHanaBaseUrlSettingName, " "))
+                };
+
+                yield return new object[]
+                {
+                    new Action(() =>
+                        KnockoutEnvironmentVariable(AzureConfigurationSettings
+                            .CreateCustomerLoyaltyHanaBaseUrlSettingName, null))
+                };
+
                 // knockout config for endpoint
                 yield return new object[]
                 {
                     new Action(() =>
                         KnockoutEnvironmentVariable(AzureConfigurationSettings
-                            .CreateCustomerLoyaltyEndpointSettingName, ""))
+                            .CreateCustomerLoyaltyHanaEndPointSettingName, ""))
                 };
 
                 yield return new object[]
                 {
                     new Action(() =>
                         KnockoutEnvironmentVariable(AzureConfigurationSettings
-                            .CreateCustomerLoyaltyEndpointSettingName, " "))
+                            .CreateCustomerLoyaltyHanaEndPointSettingName, " "))
                 };
 
                 yield return new object[]
                 {
                     new Action(() =>
                         KnockoutEnvironmentVariable(AzureConfigurationSettings
-                            .CreateCustomerLoyaltyEndpointSettingName, null))
+                            .CreateCustomerLoyaltyHanaEndPointSettingName, null))
                 };
-
 
                 // knockout config for key vault certificate
                 yield return new object[]
@@ -199,9 +230,14 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
                     Environment.SetEnvironmentVariable(AzureConfigurationSettings.KeyVaultBaseUriSettingName, value);
                 }
 
-                if (!knockout.Equals(AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName))
+                if (!knockout.Equals(AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName))
                 {
-                    Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyEndpointSettingName, value);
+                    Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName, value);
+                }
+
+                if (!knockout.Equals(AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName))
+                {
+                    Environment.SetEnvironmentVariable(AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName, value);
                 }
 
                 if (!knockout.Equals(AzureConfigurationSettings.KeyValueCertificateNameSettingName))
