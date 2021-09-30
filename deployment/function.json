@@ -98,6 +98,9 @@
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
                 "siteConfig": {
+                    "use32BitWorkerProcess": "false",
+                    "http20Enabled": "true",
+                    "vnetRouteAllEnabled": "true",
                     "appSettings": [
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -109,7 +112,7 @@
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~2"
+                            "value": "~3"
                         },
                         {
                             "name": "FUNCTIONS_WORKER_RUNTIME",
@@ -150,10 +153,6 @@
                         {
                             "name": "WEBSITE_LOAD_USER_PROFILE",
                             "value": "1"
-                        },
-                        {
-                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "value": "10.14.1"
                         }
                     ]
                 }
