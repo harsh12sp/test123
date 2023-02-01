@@ -6,45 +6,61 @@
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
         },
-        "appName":{
+        "appName": {
             "type": "string",
             "defaultValue": "dev-loyaltyv1-func-eastus"
         },
-        "appServicePlanName":{
-            "type":"string"
+        "appServicePlanName": {
+            "type": "string"
         },
-        "storageAccountName":{
+        "storageAccountName": {
             "type": "string",
             "defaultValue": ""
         },
-        "appInsightsName":{
-            "type":"string"
-        },
-        "keyVaultBaseUri":{
-            "type":"string"
-        },
-        "vnetName":{
+        "appInsightsName": {
             "type": "string"
         },
-        "functionsSubnetName":{
+        "keyVaultBaseUri": {
             "type": "string"
         },
-        "eventGridKey":{
+        "vnetName": {
+            "type": "string"
+        },
+        "functionsSubnetName": {
+            "type": "string"
+        },
+        "biwJwtAuthenticationSecret": {
+            "type": "securestring",
+            "defaultValue":"BIWJWTAuthenticationSecretKey"
+        },
+        "biwJwtIssuer" :{
+            "type":"string",
+            "defaultValue":"contractorrewards"
+        },
+        "biwJwtAuthenticationSecretExpiryMS":{
+            "type":"string",
+            "defaultValue": 900000
+        },
+        "biwParticipantEndpoint": {
+            "type": "string"
+        },       
+        "cosmosDbConnection": {
             "type": "securestring"
-        },
-        "eventGridTopicUri":{
-            "type": "string"
         },
         "mutualTlsCertificateName":{
             "type":"string",
             "defaultValue":"webapiuser"
         },
-        "hanaCreateCustomerLoyaltyBaseUrl":{
+        "hanaUpdateLoyaltyBaseUrl":{
             "type": "string"
         },
-        "hanaCreateCustomerLoyaltyEndPoint":{
+        "hanaUpdateLoyaltyEndPoint":{
             "type":"string",
             "defaultValue":"webapi/retailers/pos/loyalty_registration"
+        },
+        "netFrameworkVersion": {
+            "type": "string",
+            "defaultValue": "v6.0"
         }
     },
     "variables": {
@@ -54,11 +70,11 @@
         "storageAccountName": "[parameters('storageAccountName')]",
         "appInsightsName": "[parameters('appInsightsName')]",
         "keyVaultBaseUri": "[parameters('keyVaultBaseUri')]",
-        "functionsSubnetName":"[parameters('functionsSubnetName')]",
-        "vnetName":"[parameters('vnetName')]",
-        "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('functionsSubnetName'))]",
-        "eventGridTopicUri":"[parameters('eventGridTopicUri')]",
-        "mutualTlsCertificateName":"[parameters('mutualTlsCertificateName')]"
+        "functionsSubnetName": "[parameters('functionsSubnetName')]",
+        "vnetName": "[parameters('vnetName')]",
+        "subnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('functionsSubnetName'))]",
+        "biwParticipantEndpoint": "[parameters('biwParticipantEndpoint')]",
+        "mutualTlsCertificateName": "[parameters('mutualTlsCertificateName')]"
     },
     "resources": [
         {
@@ -80,9 +96,9 @@
             "type": "Microsoft.Insights/components",
             "location": "[resourceGroup().location]",
             "properties": {
-              "applicationId": "[variables('appInsightsName')]"
+                "applicationId": "[variables('appInsightsName')]"
             }
-          },
+        },
         {
             "apiVersion": "2016-03-01",
             "type": "Microsoft.Web/sites",
@@ -98,6 +114,7 @@
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
                 "siteConfig": {
+                    "netFrameworkVersion": "[parameters('netFrameworkVersion')]",
                     "appSettings": [
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -108,28 +125,44 @@
                             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
                         },
                         {
+                            "name": "BIW.JWT_AuthenticationSecret",
+                            "value": "[parameters('biwJwtAuthenticationSecret')]"
+                        },
+                        {
+                            "name": "BIW.JWT_Issuer",
+                            "value": "[parameters('biwJwtIssuer')]"
+                        },
+                        {
+                            "name": "BIW.JWT_AuthenticationSecretExpiryMS",
+                            "value": "[parameters('biwJwtAuthenticationSecretExpiryMS')]"
+                        },
+                        {
+                            "name": "BIW.EnrollParticipantEndpoint",
+                            "value": "[variables('biwParticipantEndpoint')]"
+                        },
+                        {
+                            "name": "CosmosDbConnection",
+                            "value": "[parameters('cosmosDbConnection')]"
+                        },
+                        {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~2"
+                            "value": "~4"
                         },
                         {
                             "name": "FUNCTIONS_WORKER_RUNTIME",
                             "value": "dotnet"
                         },
                         {
-                            "name": "EventGrid.Key",
-                            "value": "[parameters('eventGridKey')]"
-                          },
-                          {
-                            "name": "EventGrid.TopicUri",
-                            "value": "[variables('eventGridTopicUri')]"
-                          },
-                          {
-                            "name": "Hana.CreateCustomerLoyaltyBaseUrl",
-                            "value": "[parameters('hanaCreateCustomerLoyaltyBaseUrl')]"
-                          },
-                         {
-                            "name": "Hana.CreateCustomerLoyaltyEndPoint",
-                            "value": "[parameters('hanaCreateCustomerLoyaltyEndPoint')]"
+                            "name": "Hana.UpdateLoyaltyBaseUrl",
+                            "value": "[parameters('hanaUpdateLoyaltyBaseUrl')]"
+                        },
+                        {
+                            "name": "Hana.UpdateLoyaltyEndPoint",
+                            "value": "[parameters('hanaUpdateLoyaltyEndPoint')]"
+                        },
+                        {
+                            "name": "Storage.MaxDequeueCount",
+                            "value": "5"
                         },
                         {
                             "name": "KeyVault.BaseUri",
@@ -174,11 +207,5 @@
                 }
             ]
         }
-    ],
-    "outputs": {
-        "functionKeys": {
-            "type": "object",
-            "value": "[listkeys(concat(resourceId('Microsoft.Web/sites', variables('functionAppName')), '/host/default'), '2018-11-01')]"
-        }
-    }
+    ]
 }
