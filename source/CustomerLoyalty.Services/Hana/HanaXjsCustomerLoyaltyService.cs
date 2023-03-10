@@ -90,7 +90,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
                 convertToEventGridCustomer(c))
             {
                 Id = Guid.NewGuid().ToString(),
-                EventTime = DateTime.Now
+                EventTime = DateTime.UtcNow
             }, customer);
 
             return new CustomerLoyaltyIndicator

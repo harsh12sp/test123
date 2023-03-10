@@ -26,7 +26,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integratio
                 data: c)
             {
                 Id = Guid.NewGuid().ToString(),
-                EventTime = DateTime.Now
+                EventTime = DateTime.UtcNow
             }, new TestCustomer());
         }
 

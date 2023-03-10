@@ -25,7 +25,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.PostP
                 data: customer)
             {
                 Id = Guid.NewGuid().ToString(),
-                EventTime = DateTime.Now
+                EventTime = DateTime.UtcNow
             };
 
         public AzureEventGridTopicPublisherTests()
