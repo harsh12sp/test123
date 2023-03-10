@@ -7,12 +7,12 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure.Messaging.EventGrid;
 using BenjaminMoore.Api.Retail.Pos.Common.Http;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
-using Microsoft.Azure.EventGrid.Models;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
@@ -138,8 +138,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
                         new HanaXjsCreateLoyaltyResponse())));
 
             Customer customer = new Customer();
-
-            _customerPublisherMock.Setup(setup => setup.Publish(It.IsAny<Func<Customer, EventGridEvent>>(), It.IsAny<Customer>())).Returns(Task.CompletedTask)
+            var mockResponse = new Mock<Azure.Response>();
+            _customerPublisherMock.Setup(setup => setup.Publish(It.IsAny<Func<Customer, EventGridEvent>>(), It.IsAny<Customer>())).ReturnsAsync(mockResponse.Object)
                 .Callback<Func<Customer, EventGridEvent>, Customer[]>((converter, customerArg) =>
                 {
                     // Assert -- Ensure the customer we passed in is the customer returned?

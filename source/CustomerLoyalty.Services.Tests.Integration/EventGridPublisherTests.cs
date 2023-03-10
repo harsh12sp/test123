@@ -1,9 +1,9 @@
 ﻿﻿using System;
 using System.Threading.Tasks;
+using Azure;
+using Azure.Messaging.EventGrid;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
-using Microsoft.Azure.EventGrid;
-using Microsoft.Azure.EventGrid.Models;
 using Xunit;
 
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integration
@@ -14,15 +14,19 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integratio
         public async Task Publish_SendEventsTest()
         {
             IConfigurationSettings settings = Settings.GetFromAppSettings<EventGridSettings>();
-            IEventGridClient client = new EventGridClient(new TopicCredentials(settings.EventGridTopicKey));
+            IEventGridClient client = new EventGridClient(new Uri(settings.EventGridTopicUri),new AzureKeyCredential(settings.EventGridTopicKey));
 
             AzureEventGridTopicPublisher<Customer> customerPublisher =
                 new AzureEventGridTopicPublisher<Customer>(settings, client);
 
-            await customerPublisher.Publish(c => new EventGridEvent
+            await customerPublisher.Publish(c => new EventGridEvent(
+                subject: c.BenjaminMooreCustomerId,
+                eventType: "customer-loyalty-created",
+                dataVersion: "1.5",
+                data: c)
             {
-                Id = Guid.NewGuid().ToString(), Data = c, DataVersion = "1.5", EventTime = DateTime.UtcNow,
-                EventType = "customer-loyalty-created", Subject = c.BenjaminMooreCustomerId
+                Id = Guid.NewGuid().ToString(),
+                EventTime = DateTime.Now
             }, new TestCustomer());
         }
 
