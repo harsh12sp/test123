@@ -49,7 +49,11 @@
         "netFrameworkVersion": {
             "type": "string",
             "defaultValue": "v6.0"
-        }
+        },
+        "functionRuntimeVersion": {
+			"defaultValue": "~4",
+			"type": "string"
+		}
     },
     "variables": {
         "location": "[parameters('location')]",
@@ -114,7 +118,7 @@
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~4"
+                            "value": "[parameters('functionRuntimeVersion')]"
                         },
                         {
                             "name": "FUNCTIONS_WORKER_RUNTIME",
