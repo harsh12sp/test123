@@ -6,10 +6,9 @@ using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
-using Microsoft.Azure.EventGrid;
-using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Azure;
 
 [assembly:FunctionsStartup(typeof(Startup))]
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
@@ -43,8 +42,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
             builder.Services.AddSingleton<IEventGridClient>(provider =>
             {
                 IConfigurationSettings settings = provider.GetRequiredService<IConfigurationSettings>();
-                TopicCredentials credentials = new TopicCredentials(settings.EventGridTopicKey);
-                EventGridClient client = new EventGridClient(credentials);
+                AzureKeyCredential credentials = new AzureKeyCredential(settings.EventGridTopicKey);
+                EventGridClient client = new EventGridClient(new Uri(settings.EventGridTopicUri), credentials);
 
                 return client;
             });

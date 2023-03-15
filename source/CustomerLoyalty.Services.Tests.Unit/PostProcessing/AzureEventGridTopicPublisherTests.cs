@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.Net;
 using System.Threading.Tasks;
+using Azure;
+using Azure.Messaging.EventGrid;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
-using Microsoft.Azure.EventGrid;
-using Microsoft.Azure.EventGrid.Models;
-using Microsoft.Rest.Azure;
 using Moq;
 using Xunit;
 
@@ -19,7 +18,15 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.PostP
         private readonly IEventPublisher<Customer> _customerPublisher;
 
         private static readonly Func<Customer, EventGridEvent> Converter = customer =>
-            new EventGridEvent {Id = Guid.NewGuid().ToString(), Data = customer};
+            new EventGridEvent(
+                subject: "test-subject",
+                eventType: "customer-loyalty-created",
+                dataVersion: "1.5",
+                data: customer)
+            {
+                Id = Guid.NewGuid().ToString(),
+                EventTime = DateTime.UtcNow
+            };
 
         public AzureEventGridTopicPublisherTests()
         {
@@ -54,16 +61,17 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.PostP
         [Fact]
         public async Task Publish_WhenCustomerDocumentsProvided_ShouldBatchCustomersToEventGrid()
         {
-            _eventGridClientMock.Setup(setup => setup.PublishEventsWithHttpMessagesAsync(It.IsAny<string>(),
-                    It.IsAny<IList<EventGridEvent>>(), It.IsAny<Dictionary<string, List<string>>>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new AzureOperationResponse());
+   
+            var mockResponse = new Mock<Response>();
+            mockResponse.SetupGet(x => x.Status).Returns((int)HttpStatusCode.OK);
+            
+            _eventGridClientMock.Setup(setup => setup.PublishEventsAsync(It.IsAny<IList<EventGridEvent>>()))
+                .ReturnsAsync(mockResponse.Object);
 
             await _customerPublisher.Publish(Converter, new Customer());
 
-            _eventGridClientMock.Verify(verify => verify.PublishEventsWithHttpMessagesAsync(It.IsAny<string>(),
-                It.IsAny<IList<EventGridEvent>>(), It.IsAny<Dictionary<string, List<string>>>(),
-                It.IsAny<CancellationToken>()));
+            _eventGridClientMock.Verify(verify => verify.PublishEventsAsync(
+                It.IsAny<IList<EventGridEvent>>()));
         }
 
         internal class ConstructorData : IEnumerable<object[]>
