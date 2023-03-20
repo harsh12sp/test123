@@ -45,7 +45,15 @@
         "hanaCreateCustomerLoyaltyEndPoint":{
             "type":"string",
             "defaultValue":"webapi/retailers/pos/loyalty_registration"
-        }
+        },
+        "netFrameworkVersion": {
+            "type": "string",
+            "defaultValue": "v6.0"
+        },
+        "functionRuntimeVersion": {
+			"defaultValue": "~4",
+			"type": "string"
+		}
     },
     "variables": {
         "location": "[parameters('location')]",
@@ -101,6 +109,7 @@
                     "use32BitWorkerProcess": "false",
                     "http20Enabled": "true",
                     "vnetRouteAllEnabled": "true",
+                    "netFrameworkVersion": "[parameters('netFrameworkVersion')]",
                     "appSettings": [
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -112,7 +121,7 @@
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~3"
+                            "value": "[parameters('functionRuntimeVersion')]"
                         },
                         {
                             "name": "FUNCTIONS_WORKER_RUNTIME",
