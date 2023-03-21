@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.EventGrid;
-using Microsoft.Azure.EventGrid.Models;
+using Azure;
+using Azure.Messaging.EventGrid;
 
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing
 {
@@ -17,13 +17,11 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing
             _eventGridClient = eventGridClient ?? throw new ArgumentNullException(nameof(eventGridClient));
         }
 
-        public Task Publish(Func<TEventPayload, EventGridEvent> payloadConverter, params TEventPayload[] events)
-        {
+        public async Task<Response> Publish(Func<TEventPayload, EventGridEvent> payloadConverter, params TEventPayload[] events)
+        {            
             if (events == null || events.All(c => c == null)) throw new ArgumentNullException(nameof(events));
 
-            string eventGridHost = new Uri(_configurationSettings.EventGridTopicUri).Host;
-
-            return _eventGridClient.PublishEventsAsync(eventGridHost, events.Select(payloadConverter).ToArray());
+            return (await _eventGridClient.PublishEventsAsync(events.Select(payloadConverter).ToArray()));
         }
     }
 }

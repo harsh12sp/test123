@@ -1,8 +1,8 @@
-﻿using BenjaminMoore.Api.Retail.Pos.Common.Http;
+﻿using Azure.Messaging.EventGrid;
+using BenjaminMoore.Api.Retail.Pos.Common.Http;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
-using Microsoft.Azure.EventGrid.Models;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -83,20 +83,46 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
             customer.SegmentCode = hanaXjsPayload.SegmentCode;
             customer.BiwExisting = hanaXjsPayload.BiwExisting;
 
-            await _customerEventPublisher.Publish(c => new EventGridEvent
+            await _customerEventPublisher.Publish(c => new EventGridEvent(
+                subject: customer.BenjaminMooreCustomerId,
+                eventType: "customer-loyalty-created",
+                dataVersion: "1.5",
+                convertToEventGridCustomer(c))
             {
                 Id = Guid.NewGuid().ToString(),
-                Subject = c.BenjaminMooreCustomerId,
-                Data = c,
-                EventType = "customer-loyalty-created",
-                EventTime = DateTime.UtcNow,
-                DataVersion = "1.5"
+                EventTime = DateTime.UtcNow
             }, customer);
 
             return new CustomerLoyaltyIndicator
             {
                 BmcId = hanaXjsPayload.BmcId,
                 LoyaltyIndicator = hanaXjsPayload.LoyaltyIndicator
+            };
+        }
+
+        private EventGridCustomer convertToEventGridCustomer(Customer customer)
+        {
+            return new EventGridCustomer
+            {
+                bmc_id = customer.BenjaminMooreCustomerId,
+                retailer_id = customer.RetailerId,
+                loyalty_email_id = customer.LoyaltyEmailAddress,
+                business_name = customer.BusinessName,
+                business_email_id = customer.BusinessEmailAddress,
+                business_phone_number = customer.BusinessPhoneNumber,
+                business_type = customer.BusinessType,
+                address_line1 = customer.Address1,
+                address_line2 = customer.Address2,
+                city = customer.City,
+                state_code = customer.State,
+                zipcode = customer.PostalCode,
+                contact_first_name = customer.FirstName,
+                contact_last_name = customer.LastName,
+                contact_email_id = customer.ContactEmailAddress,
+                contact_phone_number = customer.ContactPhoneNumber,
+                segment_code = customer.SegmentCode,
+                language_code = customer.LanguageCode,
+                biw_existing = customer.BiwExisting
             };
         }
     }
