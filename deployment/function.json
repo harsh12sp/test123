@@ -106,9 +106,6 @@
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
                 "siteConfig": {
-                    "use32BitWorkerProcess": "false",
-                    "http20Enabled": "true",
-                    "vnetRouteAllEnabled": "true",
                     "netFrameworkVersion": "[parameters('netFrameworkVersion')]",
                     "appSettings": [
                         {
@@ -162,6 +159,10 @@
                         {
                             "name": "WEBSITE_LOAD_USER_PROFILE",
                             "value": "1"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "10.14.1"
                         }
                     ]
                 }
