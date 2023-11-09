@@ -9,8 +9,12 @@ using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Azure;
+using BenjaminMoore.Api.Retail.Pos.Common.Logger;
+using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils;
+using BenjaminMoore.Api.Retail.Pos.Common.Configuration;
+using BenjaminMoore.Api.Retail.Pos.Customers.FunctionApp.TestHelpers;
 
-[assembly:FunctionsStartup(typeof(Startup))]
+[assembly: FunctionsStartup(typeof(Startup))]
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
 {
     public class Startup : FunctionsStartup
@@ -48,10 +52,20 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
                 return client;
             });
 
+            builder.Services.AddSingleton<ILoggerConfigurationSettings>(provider =>
+            {
+                IConfigurationSettings settings = provider.GetRequiredService<IConfigurationSettings>();
+                return new LoggerConfigurationSettings(settings.ErrorLogApiKey, settings.ErrorLogApiUrl, settings.LogDestination, settings.LogBlobContainerName, settings.LogDirectoryError, settings.LogDirectoryDebug, settings.LogDirectoryInfo, settings.LogDirectoryWarning);
+            });
+
             builder.Services.AddSingleton<IEventPublisher<Customer>, AzureEventGridTopicPublisher<Customer>>();
             builder.Services.AddSingleton<ICertificateValidator, MutualTlsCertificateValidator>();
             builder.Services.AddSingleton<ICertificateRetriever, AzureKeyVaultCertificateRetriever>();
+            builder.Services.AddSingleton<ILoggerHttpClientFactory, LoggerHttpClientFactory>();
             builder.Services.AddSingleton<IHttpClientFactory, MutualTlsHttpClientFactory>();
+
+            builder.Services.AddSingleton<ILoggerService, LoggerService>();
+            builder.Services.AddSingleton<IErrorHandler, ErrorHandler>();
 
             // NB: This will only run on a vnet peered with on-premises access to ERP-SAP system.
             builder.Services.AddTransient<ICustomerLoyaltyService, HanaXjsCustomerLoyaltyService>();
@@ -59,6 +73,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
 
         private void ConfigureLocalDevelopment(IFunctionsHostBuilder builder)
         {
+            builder.Services.AddSingleton<IErrorHandler, TestFakeErrorHandler>();
             builder.Services.AddSingleton<ICustomerLoyaltyService, FakeCustomerLoyaltyService>();
         }
     }

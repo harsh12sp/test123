@@ -1,8 +1,13 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Net.Http;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using BenjaminMoore.Api.Retail.Pos.Common.Diagnostics;
+using BenjaminMoore.Api.Retail.Pos.Common.Dto;
+using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using Microsoft.AspNetCore.Http;
@@ -19,21 +24,23 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
     public class CustomerLoyaltyFunctionTests
     {
         private readonly Mock<ICustomerLoyaltyService> _customerLoyaltyServiceMock;
+        private readonly Mock<IErrorHandler> _errorHandlerMock;
         private readonly CustomerLoyaltyFunction _customerLoyaltyFunction;
 
         public CustomerLoyaltyFunctionTests()
         {
             _customerLoyaltyServiceMock = new Mock<ICustomerLoyaltyService>();
+            _errorHandlerMock = new Mock<IErrorHandler>();
             _customerLoyaltyServiceMock.Setup(setup => setup.CreateCustomerLoyalty(It.IsAny<Customer>()))
                 .ReturnsAsync(new CustomerLoyaltyIndicator());
 
-            _customerLoyaltyFunction = new CustomerLoyaltyFunction(_customerLoyaltyServiceMock.Object);
+            _customerLoyaltyFunction = new CustomerLoyaltyFunction(_customerLoyaltyServiceMock.Object, _errorHandlerMock.Object);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithANullReference_ShouldThrowAnArugmentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new CustomerLoyaltyFunction(default(ICustomerLoyaltyService)));
+            Assert.Throws<ArgumentNullException>(() => new CustomerLoyaltyFunction(default(ICustomerLoyaltyService), _errorHandlerMock.Object));
         }
 
         [Fact]
@@ -43,6 +50,17 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
             using (Stream stream = new MemoryStream())
             {
                 HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) {Body = stream};
+
+                _customerLoyaltyServiceMock.Setup(setup =>
+                    setup.CreateCustomerLoyalty(
+                        It.IsAny<Customer>()))
+                .Throws(new HanaRequestException(ErrorCollection.GetSerializedErrors(), new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest }, "testing payload"));
+
+                _errorHandlerMock.Setup(e => e.HandleError(It.IsAny<HttpRequestInfo>(), It.IsAny<FunctionTimerException>(), It.IsAny<string>(), It.IsAny<ILogger>()))
+                .Returns(new BadRequestObjectResult("Missing Email")
+                {
+                    StatusCode = 400
+                }).Verifiable();
 
                 // Act
                 BadRequestObjectResult result =
@@ -85,7 +103,18 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
             {
                 HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) {Body = stream};
                 _customerLoyaltyServiceMock.Setup(setup => setup.CreateCustomerLoyalty(It.IsAny<Customer>()))
-                    .Throws(new HanaRequestException(ErrorCollection.GetSerializedErrors()));
+                    .Throws(new HanaRequestException(ErrorCollection.GetSerializedErrors(), new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest }, "testing payload"));
+
+                _customerLoyaltyServiceMock.Setup(setup =>
+                    setup.CreateCustomerLoyalty(
+                        It.IsAny<Customer>()))
+                .Throws(new HanaRequestException(ErrorCollection.GetSerializedErrors(), new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest }, "testing payload"));
+
+                _errorHandlerMock.Setup(e => e.HandleError(It.IsAny<HttpRequestInfo>(), It.IsAny<FunctionTimerException>(), It.IsAny<string>(), It.IsAny<ILogger>()))
+                .Returns(new BadRequestObjectResult("Missing Email")
+                {
+                    StatusCode = 400
+                }).Verifiable();
 
 
                 // Act

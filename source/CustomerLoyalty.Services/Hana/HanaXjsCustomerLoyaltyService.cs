@@ -3,6 +3,7 @@ using BenjaminMoore.Api.Retail.Pos.Common.Http;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -68,7 +69,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     string body = await response.Content.ReadAsStringAsync();
-                    throw new HanaRequestException(body);
+                    string hanaRequestPayload = JsonConvert.SerializeObject(customerLoyaltyRequest);
+                    throw new HanaRequestException(body, response, hanaRequestPayload);
                 }
                 else
                 {
