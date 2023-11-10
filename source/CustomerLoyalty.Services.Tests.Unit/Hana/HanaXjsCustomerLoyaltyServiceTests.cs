@@ -14,7 +14,6 @@ using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.PostProcessing;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
@@ -254,7 +253,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.Hana
                 {
                     return Task.FromResult(new HttpResponseMessage(_statusCode)
                     {
-                        Content = new StringContent(JsonConvert.SerializeObject(_payload), Encoding.UTF8,
+                        Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(_payload), Encoding.UTF8,
                             "application/json")
                     });
                 }

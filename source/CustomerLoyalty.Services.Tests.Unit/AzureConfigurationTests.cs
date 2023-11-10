@@ -40,12 +40,12 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
 
             AzureConfigurationSettings settings = new AzureConfigurationSettings();
 
-            Assert.Equal(settings.KeyVaultBaseUri, AzureConfigurationSettings.KeyVaultBaseUriSettingName);
-            Assert.Equal(settings.CreateCustomerLoyaltyHanaBaseUrl, AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName);
-            Assert.Equal(settings.CreateCustomerLoyaltyHanaEndPoint, AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName);
-            Assert.Equal(settings.KeyVaultCertificateName, AzureConfigurationSettings.KeyValueCertificateNameSettingName);
-            Assert.Equal(settings.EventGridTopicKey, AzureConfigurationSettings.EventGridTopicKeySettingName);
-            Assert.Equal(settings.EventGridTopicUri, AzureConfigurationSettings.EventGridTopicUriSettingName);
+            Assert.Equal(AzureConfigurationSettings.KeyVaultBaseUriSettingName, settings.KeyVaultBaseUri);
+            Assert.Equal(AzureConfigurationSettings.CreateCustomerLoyaltyHanaBaseUrlSettingName, settings.CreateCustomerLoyaltyHanaBaseUrl);
+            Assert.Equal(AzureConfigurationSettings.CreateCustomerLoyaltyHanaEndPointSettingName, settings.CreateCustomerLoyaltyHanaEndPoint);
+            Assert.Equal(AzureConfigurationSettings.KeyValueCertificateNameSettingName, settings.KeyVaultCertificateName);
+            Assert.Equal(AzureConfigurationSettings.EventGridTopicKeySettingName, settings.EventGridTopicKey);
+            Assert.Equal(AzureConfigurationSettings.EventGridTopicUriSettingName, settings.EventGridTopicUri);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
 
             AzureConfigurationSettings settings = new AzureConfigurationSettings();
 
-            Assert.Equal(settings.DefaultSegmentCode, AzureConfigurationSettings.DefaultSegmentCodeSettingName);
+            Assert.Equal(AzureConfigurationSettings.DefaultSegmentCodeSettingName, settings.DefaultSegmentCode);
         }
 
         [Fact]
@@ -97,7 +97,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit
 
             AzureConfigurationSettings settings = new AzureConfigurationSettings();
 
-            Assert.Equal(settings.DefaultLanguageCode, AzureConfigurationSettings.DefaultLanguageCodeSettingName);
+            Assert.Equal(AzureConfigurationSettings.DefaultLanguageCodeSettingName, settings.DefaultLanguageCode);
         }
 
         internal class ClassData :IEnumerable<object[]>

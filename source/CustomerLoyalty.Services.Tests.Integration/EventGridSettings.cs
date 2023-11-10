@@ -12,5 +12,21 @@
         public string EventGridTopicKey => Token;
         public string DefaultSegmentCode => "Missing";
         public string DefaultLanguageCode => "Missing";
+
+        public string ErrorLogApiUrl => "Missing";
+
+        public string ErrorLogApiKey => "Missing";
+
+        public string LogBlobContainerName => "Missing";
+
+        public string LogDestination => "Missing";
+
+        public string LogDirectoryError => "Missing";
+
+        public string LogDirectoryDebug => "Missing";
+
+        public string LogDirectoryInfo => "Missing";
+
+        public string LogDirectoryWarning => "Missing";
     }
 }

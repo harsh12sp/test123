@@ -14,6 +14,14 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
         public const string DefaultLanguageCodeSettingName = "Defaults.LanguageCode";
         private const string UnconfiguredDefaultSegmentCode = "TRDCPAINT";
         private const string UnconfiguredDefaultLanguageCode = "EN";
+        private const string ErrorLogAPIUrlSettingName = "ErrorLog.ApiUrl";
+        private const string ErrorLogAPIKeySettingName = "ErrorLog.ApiKey";
+        private const string LogBlobContainerNameSettingName = "ErrorLog.BlobContainerName";
+        private const string LogDestinationSettingName = "ErrorLog.Destination";
+        private const string LogDirectoryErrorSettingName = "ErrorLog.ErrorDirectoryName";
+        private const string LogDirectoryDebugSettingName = "ErrorLog.DebugDirectoryName";
+        private const string LogDirectoryInfoSettingName = "ErrorLog.InfoDirectoryName";
+        private const string LogDirectoryWarningSettingName = "ErrorLog.WarningDirectoryName";
 
         public AzureConfigurationSettings()
         {
@@ -31,6 +39,15 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
 
             DefaultLanguageCode = Environment.GetEnvironmentVariable(DefaultLanguageCodeSettingName) ??
                                   UnconfiguredDefaultLanguageCode;
+
+            ErrorLogApiUrl = Environment.GetEnvironmentVariable(ErrorLogAPIUrlSettingName);
+            ErrorLogApiKey = Environment.GetEnvironmentVariable(ErrorLogAPIKeySettingName);
+            LogBlobContainerName = Environment.GetEnvironmentVariable(LogBlobContainerNameSettingName);
+            LogDestination = Environment.GetEnvironmentVariable(LogDestinationSettingName);
+            LogDirectoryError = Environment.GetEnvironmentVariable(LogDirectoryErrorSettingName);
+            LogDirectoryDebug = Environment.GetEnvironmentVariable(LogDirectoryDebugSettingName);
+            LogDirectoryInfo = Environment.GetEnvironmentVariable(LogDirectoryInfoSettingName);
+            LogDirectoryWarning = Environment.GetEnvironmentVariable(LogDirectoryWarningSettingName);
 
             if (string.IsNullOrWhiteSpace(KeyVaultCertificateName))
             {
@@ -71,5 +88,13 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services
         public string DefaultSegmentCode { get; }
         public string DefaultLanguageCode { get; }
         public string CreateCustomerLoyaltyHanaEndPoint { get; }
+        public string ErrorLogApiUrl { get; }
+        public string ErrorLogApiKey { get; }
+        public string LogBlobContainerName { get; }
+        public string LogDestination { get; }
+        public string LogDirectoryError { get; }
+        public string LogDirectoryDebug { get; }
+        public string LogDirectoryInfo { get; }
+        public string LogDirectoryWarning { get; }
     }
 }

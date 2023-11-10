@@ -1,4 +1,7 @@
 using BenjaminMoore.Api.Retail.Pos.Common.Diagnostics;
+using BenjaminMoore.Api.Retail.Pos.Common.Dto;
+using BenjaminMoore.Api.Retail.Pos.Common.Extensions;
+using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using Microsoft.AspNetCore.Http;
@@ -7,7 +10,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,15 +19,13 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
     public class CustomerLoyaltyFunction
     {
         private readonly ICustomerLoyaltyService _customerLoyaltyService;
-        private const string ErrorCode = "req_process_failed";
-        private const string ErrorMessage = "Unable to process request";
-        private const string ErrorDetails = "Error occurred while processing request.";
-        private const string ErrorTarget = "generic_exception";
+        private readonly IErrorHandler _errorHandler;
 
-        public CustomerLoyaltyFunction(ICustomerLoyaltyService customerLoyaltyService)
+        public CustomerLoyaltyFunction(ICustomerLoyaltyService customerLoyaltyService, IErrorHandler errorHandler)
         {
             _customerLoyaltyService =
                 customerLoyaltyService ?? throw new ArgumentNullException(nameof(customerLoyaltyService));
+            _errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
         }
 
         [FunctionName("CreateCustomerLoyalty")]
@@ -33,22 +33,20 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "customerloyalty")] HttpRequest req,
             ILogger log)
         {
+            HttpRequestInfo requestInfo = null;
             try
             {
                 TimedFunctionResult<CustomerLoyaltyIndicator> timedFunctionResult = await FunctionTimer.ExecuteWithTimer(async () =>
                 {
                     Customer customer = null;
+                    requestInfo = await req.GetHttpRequestInfo();
 
-                    using (StreamReader reader = new StreamReader(req.Body))
+                    if (string.IsNullOrWhiteSpace(requestInfo.Body))
                     {
-                        string body = await reader.ReadToEndAsync();
-                        if (string.IsNullOrWhiteSpace(body))
-                        {
-                            throw new IOException("Missing of empty request body");
-                        }
-
-                        customer = JsonConvert.DeserializeObject<Customer>(body);
+                        throw new IOException("Missing of empty request body");
                     }
+
+                    customer = JsonConvert.DeserializeObject<Customer>(requestInfo.Body);
 
                     return await _customerLoyaltyService.CreateCustomerLoyalty(customer);
                 });
@@ -62,35 +60,9 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
 
                 return new OkObjectResult(customerInfo);
             }
-            catch (FunctionTimerException ex) when (ex.InnerException is HanaRequestException hanaRequestException)
+            catch (FunctionTimerException ex)
             {
-                return new BadRequestObjectResult(
-                    new ErrorInfo
-                    {
-                        Errors = JObject.Parse(hanaRequestException.Errors),
-                        ResponseInfo = new ResponseMetadata { ResponseTime = $"{ex.ExecutionTime.TotalMilliseconds}ms" }
-                    });
-            }
-            catch (FunctionTimerException ex) when (ex.InnerException is IOException ioException)
-            {
-                return new BadRequestObjectResult(ioException.Message);
-            }
-            catch (FunctionTimerException ex) when (ex.InnerException is Exception)
-            {
-                CustomError errors = new CustomError
-                {
-                    Code = ErrorCode,
-                    Message = ErrorMessage,
-                    Details = ErrorDetails,
-                    Target = ErrorTarget
-                };
-
-                return new BadRequestObjectResult(
-                    new ErrorInfo
-                    {
-                        Errors = JObject.Parse(JsonConvert.SerializeObject(errors)),
-                        ResponseInfo = new ResponseMetadata { ResponseTime = $"{ex.ExecutionTime.TotalMilliseconds}ms" }
-                    });
+                return _errorHandler.HandleError(requestInfo, ex, Constant.CreateCustomerLoyaltyFunctionName, log);
             }
         }
     }
