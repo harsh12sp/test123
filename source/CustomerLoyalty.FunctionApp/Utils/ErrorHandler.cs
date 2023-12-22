@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using BenjaminMoore.Api.Retail.Pos.Common.Extensions;
+using System.Net;
 
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
 {
@@ -26,7 +27,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
             _loggerService = loggerService;
         }
 
-        public ObjectResult HandleError(HttpRequestInfo request, FunctionTimerException error, string functionName, ILogger log)
+        public ObjectResult HandleError(HttpRequestInfo request, FunctionTimerException error, string errorSource, ILogger log)
         {
             this.LogContextError(log, error);
 
@@ -34,28 +35,53 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
 
             if (error.InnerException is HanaRequestException hanaRequestException)
             {
-                request = hanaRequestException.ErrorResponseMessage.GetRequestInfoFromHttpClient(hanaRequestException.HanaRequestPayload);
-                _loggerService.LogError(hanaRequestException, request, functionName);
-                errorResponse = new BadRequestObjectResult(
-                   new ErrorInfo
-                   {
-                       Errors = JObject.Parse(hanaRequestException.Errors),
-                       ResponseInfo = new ResponseMetadata { ResponseTime = $"{error.ExecutionTime.TotalMilliseconds}ms" }
-                   });
+                request = hanaRequestException.HttpRequestInfo;
+
+                if (hanaRequestException.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    _loggerService.LogWarning(hanaRequestException.Message, hanaRequestException.Errors, request, errorSource);
+
+                    errorResponse = new BadRequestObjectResult(
+                       new ErrorInfo
+                       {
+                           Errors = JObject.Parse(hanaRequestException.Errors),
+                           ResponseInfo = new ResponseMetadata { ResponseTime = $"{error.ExecutionTime.TotalMilliseconds}ms" }
+                       });
+                }
+                else
+                {
+                    _loggerService.LogError(hanaRequestException.GetType().Name, (int)hanaRequestException.StatusCode, hanaRequestException.Message,
+                   hanaRequestException.Errors, hanaRequestException.StackTrace, hanaRequestException.HttpRequestInfo, errorSource);
+
+                    CustomError customError = new CustomError
+                    {
+                        Code = ErrorCode,
+                        Message = ErrorMessage,
+                        Details = ErrorDetails,
+                        Target = ErrorTarget
+                    };
+
+                    errorResponse = new BadRequestObjectResult(
+                        new ErrorInfo
+                        {
+                            Errors = JObject.Parse(JsonConvert.SerializeObject(customError)),
+                            ResponseInfo = new ResponseMetadata { ResponseTime = $"{error.ExecutionTime.TotalMilliseconds}ms" }
+                        });
+                }
             }
             else if (error.InnerException is ArgumentNullException argumentNullException)
             {
-                _loggerService.LogWarning(argumentNullException.Message, argumentNullException.StackTrace, request, functionName);
+                _loggerService.LogWarning(argumentNullException.Message, argumentNullException.StackTrace, request, errorSource);
                 errorResponse = new BadRequestObjectResult(argumentNullException.Message);
             }
             else if (error.InnerException is IOException ioException)
             {
-                _loggerService.LogWarning(ioException.Message, ioException.StackTrace, request, functionName);
+                _loggerService.LogWarning(ioException.Message, ioException.StackTrace, request, errorSource);
                 errorResponse = new BadRequestObjectResult(ioException.Message);
             }
             else if (error.InnerException is Exception exception)
             {
-                _loggerService.LogError(exception, request, functionName);
+                _loggerService.LogError(exception.GetType().Name, (int)HttpStatusCode.InternalServerError, exception.Message, null, exception.StackTrace, request, errorSource);
 
                 CustomError errors = new CustomError
                 {

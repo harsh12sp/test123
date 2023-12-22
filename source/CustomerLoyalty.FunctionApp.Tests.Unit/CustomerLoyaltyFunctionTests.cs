@@ -49,12 +49,12 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
             // Arrange
             using (Stream stream = new MemoryStream())
             {
-                HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) {Body = stream};
+                HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) { Body = stream };
 
                 _customerLoyaltyServiceMock.Setup(setup =>
                     setup.CreateCustomerLoyalty(
                         It.IsAny<Customer>()))
-                .Throws(new HanaRequestException(ErrorCollection.GetSerializedErrors(), new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest }, "testing payload"));
+                .Throws(new HanaRequestException("Test error message", ErrorCollection.GetSerializedErrors(), HttpStatusCode.BadRequest, new HttpRequestInfo { HttpMethod = "Post" }, "testing payload"));
 
                 _errorHandlerMock.Setup(e => e.HandleError(It.IsAny<HttpRequestInfo>(), It.IsAny<FunctionTimerException>(), It.IsAny<string>(), It.IsAny<ILogger>()))
                 .Returns(new BadRequestObjectResult("Missing Email")
@@ -101,14 +101,14 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
             // Arrange
             using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(customer)))
             {
-                HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) {Body = stream};
+                HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) { Body = stream };
                 _customerLoyaltyServiceMock.Setup(setup => setup.CreateCustomerLoyalty(It.IsAny<Customer>()))
-                    .Throws(new HanaRequestException(ErrorCollection.GetSerializedErrors(), new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest }, "testing payload"));
+                .Throws(new HanaRequestException("Test error message", ErrorCollection.GetSerializedErrors(), HttpStatusCode.BadRequest, new HttpRequestInfo { HttpMethod = "Post" }, "testing payload"));
 
                 _customerLoyaltyServiceMock.Setup(setup =>
                     setup.CreateCustomerLoyalty(
                         It.IsAny<Customer>()))
-                .Throws(new HanaRequestException(ErrorCollection.GetSerializedErrors(), new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest }, "testing payload"));
+                .Throws(new HanaRequestException("Test error message", ErrorCollection.GetSerializedErrors(), HttpStatusCode.BadRequest, new HttpRequestInfo { HttpMethod = "Post" }, "testing payload"));
 
                 _errorHandlerMock.Setup(e => e.HandleError(It.IsAny<HttpRequestInfo>(), It.IsAny<FunctionTimerException>(), It.IsAny<string>(), It.IsAny<ILogger>()))
                 .Returns(new BadRequestObjectResult("Missing Email")
@@ -157,7 +157,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
 
             using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(customer)))
             {
-                HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) {Body = stream};
+                HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) { Body = stream };
 
                 // Act
                 OkObjectResult result =
@@ -175,7 +175,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
         {
             public static string GetSerializedErrors()
             {
-                ErrorCollection root = new ErrorCollection(new Error {Code = "Failed", Message = "Missing Email"});
+                ErrorCollection root = new ErrorCollection(new Error { Code = "Failed", Message = "Missing Email" });
 
                 return JsonConvert.SerializeObject(root);
             }

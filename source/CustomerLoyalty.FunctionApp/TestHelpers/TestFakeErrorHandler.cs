@@ -19,7 +19,7 @@ namespace BenjaminMoore.Api.Retail.Pos.Customers.FunctionApp.TestHelpers
         private const string ErrorDetails = "Error occurred while processing request.";
         private const string ErrorTarget = "generic_exception";
 
-        public ObjectResult HandleError(HttpRequestInfo request, FunctionTimerException error, string functionName, ILogger log)
+        public ObjectResult HandleError(HttpRequestInfo request, FunctionTimerException error, string errorSource, ILogger log)
         {
             ObjectResult errorResponse = null;
 

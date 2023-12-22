@@ -7,6 +7,6 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
 {
     public interface IErrorHandler
     {
-        ObjectResult HandleError(HttpRequestInfo request, FunctionTimerException error, string functionName, ILogger log);
+        ObjectResult HandleError(HttpRequestInfo request, FunctionTimerException error, string errorSource, ILogger log);
     }
 }

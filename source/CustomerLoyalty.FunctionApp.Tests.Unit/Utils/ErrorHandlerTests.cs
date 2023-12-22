@@ -37,7 +37,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit.Ut
         {
             // Arrange
             var executionTime = TimeSpan.FromSeconds(2);
-            var hanaException = new HanaRequestException(ErrorCollection.GetSerializedErrors(), new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest }, "testing payload");
+            var hanaException = new HanaRequestException("Test error message", ErrorCollection.GetSerializedErrors(), HttpStatusCode.BadRequest, new HttpRequestInfo { HttpMethod = "Post" }, "testing payload");
             var error = new FunctionTimerException(executionTime, "Hana error", hanaException);
 
             // Act
