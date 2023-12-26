@@ -1,4 +1,6 @@
 ﻿using Azure.Messaging.EventGrid;
+using BenjaminMoore.Api.Retail.Pos.Common.Dto;
+using BenjaminMoore.Api.Retail.Pos.Common.Extensions;
 using BenjaminMoore.Api.Retail.Pos.Common.Http;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana.Entities;
@@ -66,15 +68,21 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
 
             if (!response.IsSuccessStatusCode)
             {
+                string hanaRequestPayload = JsonConvert.SerializeObject(customerLoyaltyRequest);
+                HttpRequestInfo httpRequestInfo = response.GetRequestInfoFromHttpClient(hanaRequestPayload);
+
+                string errorMessage = string.IsNullOrEmpty(response.ReasonPhrase)
+                ? response.StatusCode.ToString()
+                : response.ReasonPhrase;
+
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     string body = await response.Content.ReadAsStringAsync();
-                    string hanaRequestPayload = JsonConvert.SerializeObject(customerLoyaltyRequest);
-                    throw new HanaRequestException(body, response, hanaRequestPayload);
+                    throw new HanaRequestException(errorMessage, body, response.StatusCode, httpRequestInfo, hanaRequestPayload);
                 }
                 else
                 {
-                    throw new Exception();
+                    throw new HanaRequestException(errorMessage, string.Empty, response.StatusCode, httpRequestInfo, hanaRequestPayload);
                 }
             }
 
