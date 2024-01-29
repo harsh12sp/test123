@@ -1,0 +1,68 @@
+{
+	"info": {
+		"_postman_id": "bb00e308-99cc-4ad2-93ee-59e6d29bc9e9",
+		"name": "retailer-pos-customer-loyalty",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32627947"
+	},
+	"item": [
+		{
+			"name": "customer-loyalty-endpoint",
+			"item": [
+				{
+					"name": "CreateCustomerLoyalty",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bmc_id\": \"G6000000092\",\r\n    \"retailer_id\": \"10003046\",\r\n    \"loyalty_email_id\": \"contractor@wePaintForYou.com\",\r\n    \"business_name\": \"We Paint For You ®\",\r\n    \"business_email_id\": \"contractor@wepaintforyou.com\",\r\n    \"business_phone_number\": \"5551234567\",\r\n    \"business_type\": \"authorized seller\",\r\n    \"address_line1\": \"100 Sample Rd.\",\r\n    \"address_line2\": \"#Suite 202.\",\r\n    \"city\": \"Suffern\",\r\n    \"state_code\": \"NY\",\r\n    \"zipcode\": \"12345\",\r\n    \"contact_first_name\": \"John.\",\r\n    \"contact_last_name\": \"Doe.\",\r\n    \"contact_email_id\": \"john.doe@wepaintforyou.com\",\r\n    \"contact_phone_number\": \"2012349865\",\r\n    \"segment_code\": \"TRDCPAINT\",\r\n    \"language_code\": \"EN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pos/customerloyalty",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pos",
+								"customerloyalty"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:7071/retailers"
+		}
+	]
+}
