@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "apimServiceName": {
@@ -24,7 +24,8 @@
             "type": "string"
         },
         "deployToApiManagement": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "true"
         }
     },
     "variables": {
@@ -49,7 +50,7 @@
         {
             "condition": "[equals(variables('deployToApiManagement'), 'true')]",
             "type": "Microsoft.ApiManagement/service/backends",
-            "apiVersion": "2019-01-01",
+            "apiVersion": "2022-08-01",
             "name": "[concat(parameters('apimServiceName'), '/', parameters('apimBackendName'))]",
             "properties": {
                 "url": "[parameters('functionAppUri')]",
@@ -83,7 +84,7 @@
         {
             "condition": "[equals(variables('deployToApiManagement'), 'true')]",
             "type": "Microsoft.ApiManagement/service/apis/operations",
-            "apiVersion": "2019-01-01",
+            "apiVersion": "2022-08-01",
             "name": "[concat(parameters('apimServiceName'), '/', parameters('apimApi'), '/post-customerloyalty')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimServiceName'), parameters('apimApi'))]",
@@ -108,7 +109,11 @@
                     "representations": [
                         {
                             "contentType": "application/json",
-                            "sample": "{\"bmc_id\":\"G6000000092\",\"retailer_id\":\"10003046\",\"loyalty_email_id\":\"contractor@wePaintForYou.com\",\"business_name\":\"We Paint For You ®\",\"business_email_id\":\"contractor@wepaintforyou.com\",\"business_phone_number\":\"5551234567\",\"business_type\":\"authorized seller\",\"address_line1\":\"100 Sample Rd.\",\"address_line2\":\"#Suite 202.\",\"city\":\"Suffern\",\"state_code\":\"NY\",\"zipcode\":\"12345\",\"contact_first_name\":\"John.\",\"contact_last_name\":\"Doe.\",\"contact_email_id\":\"john.doe@wepaintforyou.com\",\"contact_phone_number\":\"2012349865\",\"segment_code\":\"TRDCPAINT\",\"language_code\":\"EN\"}",
+                            "examples": {
+                                "default": {
+                                    "value": "{\"bmc_id\":\"G6000000092\",\"retailer_id\":\"10003046\",\"loyalty_email_id\":\"contractor@wePaintForYou.com\",\"business_name\":\"We Paint For You ®\",\"business_email_id\":\"contractor@wepaintforyou.com\",\"business_phone_number\":\"5551234567\",\"business_type\":\"authorized seller\",\"address_line1\":\"100 Sample Rd.\",\"address_line2\":\"#Suite 202.\",\"city\":\"Suffern\",\"state_code\":\"NY\",\"zipcode\":\"12345\",\"contact_first_name\":\"John.\",\"contact_last_name\":\"Doe.\",\"contact_email_id\":\"john.doe@wepaintforyou.com\",\"contact_phone_number\":\"2012349865\",\"segment_code\":\"TRDCPAINT\",\"language_code\":\"EN\"}"
+                                }
+                            },
                             "schemaId": "createcustomerloyaltypost"
                         }
                     ]
@@ -120,7 +125,11 @@
                         "representations": [
                             {
                                 "contentType": "application/json",
-                                "sample": "{\"status\":\"OK\",{\"data\":{\"bmc_id\":\"G6000000092\",\"loyalty_indicator\":\"Y\"},\"info\":{\"last_updated\":\"null\",\"response_time\":\"400.3672ms\"}}}"
+                                "examples": {
+                                    "default": {
+                                        "value": "{\"status\":\"OK\",{\"data\":{\"bmc_id\":\"G6000000092\",\"loyalty_indicator\":\"Y\"},\"info\":{\"last_updated\":\"null\",\"response_time\":\"400.3672ms\"}}}"
+                                    }
+                                }
                             }
                         ]
                     }
@@ -150,17 +159,20 @@
                 "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimServiceName'), parameters('apimApi'), 'post-customerloyalty')]"
             ],
             "properties": {
-                "value": "[concat('<policies>\r\n  <inbound>\r\n    <choose>\r\n      <when condition=\"@(context.Request.Url.Query.GetValueOrDefault(&quot;version&quot;) == &quot;v1.0&quot;)\">\r\n        <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('apimBackendName'), '\" />\r\n        <!--<authentication-managed-identity resource=\"', parameters('functionAppUri'), '\" ignore-error=\"false\" />-->\r\n        <rewrite-uri template=\"/customerloyalty\" copy-unmatched-params=\"false\" />\r\n      </when>\r\n      <otherwise>\r\n        <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('apimBackendName'), '\" />\r\n        <!--<authentication-managed-identity resource=\"', parameters('functionAppUri'), '\" ignore-error=\"false\" />-->\r\n        <rewrite-uri template=\"/customerloyalty\" copy-unmatched-params=\"false\" />\r\n      </otherwise>\r\n    </choose>\r\n    <base />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
+                "value": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n  <choose>\r\n      <when condition=\"@(context.Request.Url.Query.GetValueOrDefault(&quot;version&quot;) == &quot;v1.0&quot;)\">\r\n        <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('apimBackendName'), '\" />\r\n        <!--<authentication-managed-identity resource=\"', parameters('functionAppUri'), '\" ignore-error=\"false\" />-->\r\n        <rewrite-uri template=\"/customerloyalty\" copy-unmatched-params=\"false\" />\r\n      </when>\r\n      <otherwise>\r\n        <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('apimBackendName'), '\" />\r\n        <!--<authentication-managed-identity resource=\"', parameters('functionAppUri'), '\" ignore-error=\"false\" />-->\r\n        <rewrite-uri template=\"/customerloyalty\" copy-unmatched-params=\"false\" />\r\n      </otherwise>\r\n    </choose>\r\n    </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
                 "format": "xml"
             }
         },
         {
             "condition": "[equals(variables('deployToApiManagement'), 'true')]",
             "type": "Microsoft.ApiManagement/service/apis/policies",
-            "apiVersion": "2019-01-01",
+            "apiVersion": "2022-08-01",
             "name": "[concat(parameters('apimServiceName'), '/', parameters('apimApi'), '/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimServiceName'), parameters('apimApi'))]"
+            ],
             "properties": {
-                "value": "<policies>\r\n    <inbound>\r\n        <base />\r\n        <cors>\r\n            <allowed-origins>\r\n                <origin>*</origin>\r\n            </allowed-origins>\r\n            <allowed-methods>\r\n                <method>GET</method>\r\n                <method>POST</method>\r\n                <method>PUT</method>\r\n                <method>DELETE</method>\r\n                <method>HEAD</method>\r\n                <method>OPTIONS</method>\r\n                <method>PATCH</method>\r\n                <method>TRACE</method>\r\n            </allowed-methods>\r\n            <allowed-headers>\r\n                <header>*</header>\r\n            </allowed-headers>\r\n            <expose-headers>\r\n                <header>*</header>\r\n            </expose-headers>\r\n        </cors>\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <set-header name=\"Content-Type\" exists-action=\"override\">\r\n            <value>application/json</value>\r\n        </set-header>\r\n        <base />    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>",
+                "value": "<policies>\r\n  <outbound>\r\n    <base />\r\n    <set-header name=\"Content-Type\" exists-action=\"override\">\r\n      <value>application/json</value>\r\n    </set-header>\r\n  </outbound>\r\n</policies>",
                 "format": "xml"
             }
         }
