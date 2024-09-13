@@ -53,7 +53,11 @@
         "functionRuntimeVersion": {
 			"defaultValue": "~4",
 			"type": "string"
-		}
+		},
+        "functionWorkerRuntime": {
+            "type": "string",
+            "defaultValue": "dotnet-isolated"
+        }
     },
     "variables": {
         "location": "[parameters('location')]",
@@ -122,7 +126,7 @@
                         },
                         {
                             "name": "FUNCTIONS_WORKER_RUNTIME",
-                            "value": "dotnet"
+                            "value": "[parameters('functionWorkerRuntime')]"
                         },
                         {
                             "name": "EventGrid.Key",
