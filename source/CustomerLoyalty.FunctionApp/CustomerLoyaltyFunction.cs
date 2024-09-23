@@ -6,8 +6,7 @@ using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -20,18 +19,19 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
     {
         private readonly ICustomerLoyaltyService _customerLoyaltyService;
         private readonly IErrorHandler _errorHandler;
+        private readonly ILogger<CustomerLoyaltyFunction> _logger;
 
-        public CustomerLoyaltyFunction(ICustomerLoyaltyService customerLoyaltyService, IErrorHandler errorHandler)
+        public CustomerLoyaltyFunction(ICustomerLoyaltyService customerLoyaltyService, IErrorHandler errorHandler, ILogger<CustomerLoyaltyFunction> logger)
         {
             _customerLoyaltyService =
                 customerLoyaltyService ?? throw new ArgumentNullException(nameof(customerLoyaltyService));
             _errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        [FunctionName("CreateCustomerLoyalty")]
+        [Function("CreateCustomerLoyalty")]
         public async Task<IActionResult> CreateCustomerLoyalty(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "customerloyalty")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "customerloyalty")] HttpRequest req)
         {
             HttpRequestInfo requestInfo = null;
             try
@@ -62,7 +62,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
             }
             catch (FunctionTimerException ex)
             {
-                return _errorHandler.HandleError(requestInfo, ex, Constant.CreateCustomerLoyaltyFunctionName, log);
+                return _errorHandler.HandleError(requestInfo, ex, Constant.CreateCustomerLoyaltyFunctionName, _logger);
             }
         }
     }
