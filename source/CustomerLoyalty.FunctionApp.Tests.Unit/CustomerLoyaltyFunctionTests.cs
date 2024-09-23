@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Net.Http;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +10,6 @@ using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -26,6 +24,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
         private readonly Mock<ICustomerLoyaltyService> _customerLoyaltyServiceMock;
         private readonly Mock<IErrorHandler> _errorHandlerMock;
         private readonly CustomerLoyaltyFunction _customerLoyaltyFunction;
+        private readonly Mock<ILogger<CustomerLoyaltyFunction>> _loggerMock;
 
         public CustomerLoyaltyFunctionTests()
         {
@@ -33,14 +32,15 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
             _errorHandlerMock = new Mock<IErrorHandler>();
             _customerLoyaltyServiceMock.Setup(setup => setup.CreateCustomerLoyalty(It.IsAny<Customer>()))
                 .ReturnsAsync(new CustomerLoyaltyIndicator());
+            _loggerMock = new Mock<ILogger<CustomerLoyaltyFunction>>();
 
-            _customerLoyaltyFunction = new CustomerLoyaltyFunction(_customerLoyaltyServiceMock.Object, _errorHandlerMock.Object);
+            _customerLoyaltyFunction = new CustomerLoyaltyFunction(_customerLoyaltyServiceMock.Object, _errorHandlerMock.Object, _loggerMock.Object);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithANullReference_ShouldThrowAnArugmentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new CustomerLoyaltyFunction(default(ICustomerLoyaltyService), _errorHandlerMock.Object));
+            Assert.Throws<ArgumentNullException>(() => new CustomerLoyaltyFunction(default(ICustomerLoyaltyService), _errorHandlerMock.Object, _loggerMock.Object));
         }
 
         [Fact]
@@ -49,7 +49,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
             // Arrange
             using (Stream stream = new MemoryStream())
             {
-                HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) { Body = stream };
+                var request = new DefaultHttpContext().Request;
+                request.Body = stream;
 
                 _customerLoyaltyServiceMock.Setup(setup =>
                     setup.CreateCustomerLoyalty(
@@ -64,7 +65,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
 
                 // Act
                 BadRequestObjectResult result =
-                    await _customerLoyaltyFunction.CreateCustomerLoyalty(request, new Mock<ILogger>().Object) as
+                    await _customerLoyaltyFunction.CreateCustomerLoyalty(request) as
                         BadRequestObjectResult;
 
                 // Assert
@@ -101,7 +102,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
             // Arrange
             using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(customer)))
             {
-                HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) { Body = stream };
+                var request = new DefaultHttpContext().Request;
+                request.Body = stream;
                 _customerLoyaltyServiceMock.Setup(setup => setup.CreateCustomerLoyalty(It.IsAny<Customer>()))
                 .Throws(new HanaRequestException("Test error message", ErrorCollection.GetSerializedErrors(), HttpStatusCode.BadRequest, new HttpRequestInfo { HttpMethod = "Post" }, "testing payload"));
 
@@ -119,7 +121,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
 
                 // Act
                 BadRequestObjectResult result =
-                    await _customerLoyaltyFunction.CreateCustomerLoyalty(request, new Mock<ILogger>().Object) as
+                    await _customerLoyaltyFunction.CreateCustomerLoyalty(request) as
                         BadRequestObjectResult;
 
                 // Assert
@@ -157,11 +159,12 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit
 
             using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(customer)))
             {
-                HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext()) { Body = stream };
+                var request = new DefaultHttpContext().Request;
+                request.Body = stream;
 
                 // Act
                 OkObjectResult result =
-                    await _customerLoyaltyFunction.CreateCustomerLoyalty(request, new Mock<ILogger>().Object) as
+                    await _customerLoyaltyFunction.CreateCustomerLoyalty(request) as
                         OkObjectResult;
 
                 // Assert

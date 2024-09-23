@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Azure.Messaging.EventGrid" Version="4.13.0" />
-	  <PackageReference Include="BenjaminMoore.Api.Retail.Pos.Common" Version="2.0.4" />
+	  <PackageReference Include="Azure.Messaging.EventGrid" Version="4.25.0" />
+	  <PackageReference Include="BenjaminMoore.Api.Retail.Pos.Common" Version="2.0.5" />
   </ItemGroup>
 
 </Project>
