@@ -1,6 +1,5 @@
 ﻿using BenjaminMoore.Api.Retail.Pos.Common.Diagnostics;
 using BenjaminMoore.Api.Retail.Pos.Common.Dto;
-using BenjaminMoore.Api.Retail.Pos.Common.Logger;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using BenjaminMoore.Api.Retail.Pos.Common.Extensions;
 using System.Net;
 
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
@@ -20,12 +18,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
         private const string ErrorMessage = "Unable to process request";
         private const string ErrorDetails = "Error occurred while processing request.";
         private const string ErrorTarget = "generic_exception";
-        private readonly ILoggerService _loggerService;
 
-        public ErrorHandler(ILoggerService loggerService)
-        {
-            _loggerService = loggerService;
-        }
 
         public ObjectResult HandleError(HttpRequestInfo request, FunctionTimerException error, string errorSource, ILogger log)
         {
@@ -39,7 +32,6 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
 
                 if (hanaRequestException.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    _loggerService.LogWarning(hanaRequestException.Message, hanaRequestException.Errors, request, errorSource);
 
                     errorResponse = new BadRequestObjectResult(
                        new ErrorInfo
@@ -50,8 +42,6 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
                 }
                 else
                 {
-                    _loggerService.LogError(hanaRequestException.GetType().Name, (int)hanaRequestException.StatusCode, hanaRequestException.Message,
-                   hanaRequestException.Errors, hanaRequestException.StackTrace, hanaRequestException.HttpRequestInfo, errorSource);
 
                     CustomError customError = new CustomError
                     {
@@ -71,17 +61,14 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
             }
             else if (error.InnerException is ArgumentNullException argumentNullException)
             {
-                _loggerService.LogWarning(argumentNullException.Message, argumentNullException.StackTrace, request, errorSource);
                 errorResponse = new BadRequestObjectResult(argumentNullException.Message);
             }
             else if (error.InnerException is IOException ioException)
             {
-                _loggerService.LogWarning(ioException.Message, ioException.StackTrace, request, errorSource);
                 errorResponse = new BadRequestObjectResult(ioException.Message);
             }
             else if (error.InnerException is Exception exception)
             {
-                _loggerService.LogError(exception.GetType().Name, (int)HttpStatusCode.InternalServerError, exception.Message, null, exception.StackTrace, request, errorSource);
 
                 CustomError errors = new CustomError
                 {

@@ -5,21 +5,13 @@ VisualStudioVersion = 16.0.29319.158
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp", "CustomerLoyalty.FunctionApp\BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.csproj", "{D1C184EA-BBD4-47C4-B564-1FE5074E1DB9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit", "CustomerLoyalty.FunctionApp.Tests.Unit\BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Unit.csproj", "{22EEDF91-AE15-4279-B86D-1A6AB7614BE4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services", "CustomerLoyalty.Services\BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.csproj", "{AC4C1C65-6202-46E0-B719-8809A7AC9543}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit", "CustomerLoyalty.Services.Tests.Unit\BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Unit.csproj", "{0056F612-1C16-4839-84D4-AC992D148760}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Integration", "CustomerLoyalty.FunctionApp.Tests.Integration\BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Tests.Integration.csproj", "{8EC830A9-C878-48B4-841E-602253D93448}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Artifacts", "Artifacts", "{1E79C810-2C6B-42B6-B6E9-5B0183A89EF9}"
 	ProjectSection(SolutionItems) = preProject
 		..\azure-pipeline-validation.yml = ..\azure-pipeline-validation.yml
 		..\README.md = ..\README.md
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integration", "CustomerLoyalty.Services.Tests.Integration\BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Tests.Integration.csproj", "{CC80E9AA-39A3-41A5-81A0-455D426064D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
