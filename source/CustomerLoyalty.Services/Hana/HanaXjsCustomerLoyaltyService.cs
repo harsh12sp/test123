@@ -1,12 +1,8 @@
-﻿using Azure.Messaging.EventGrid;
-using BenjaminMoore.Api.Retail.Pos.Common.Dto;
-using BenjaminMoore.Api.Retail.Pos.Common.Extensions;
-using BenjaminMoore.Api.Retail.Pos.Common.Http;
+﻿
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Entities;
-using Newtonsoft.Json;
 using System;
-using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
@@ -21,13 +17,35 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
                 throw new ArgumentNullException(nameof(customer));
             }
 
-            var dummyResponse = new CustomerLoyaltyIndicator
+            using (var client = new HttpClient())
             {
-                Id = customer.CustomerId,
-                LoyaltyIndicator = "Basic"
-            };
+                var url = "https://jsonplaceholder.typicode.com/todos/1";
 
-            return await Task.FromResult(dummyResponse);
+                var response = await client.GetAsync(url);
+
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<Todo>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                var customerLoyaltyIndicator = new CustomerLoyaltyIndicator
+                {
+                    Reponse = apiResponse
+                };
+
+                return customerLoyaltyIndicator;
+            }
         }
+    }
+
+    public class Todo
+    {
+        public int UserId { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public bool Completed { get; set; }
     }
 }

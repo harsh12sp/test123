@@ -3,9 +3,7 @@ using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Azure;
 using BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils;
-using BenjaminMoore.Api.Retail.Pos.Common.Configuration;
 using BenjaminMoore.Api.Retail.Pos.Customers.FunctionApp.TestHelpers;
 
 [assembly: FunctionsStartup(typeof(Startup))]

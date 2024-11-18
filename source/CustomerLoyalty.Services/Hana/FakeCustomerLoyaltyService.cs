@@ -14,7 +14,9 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
         public Task<CustomerLoyaltyIndicator> CreateCustomerLoyalty(Customer customer)
         {
             return Task.FromResult(new CustomerLoyaltyIndicator
-                {Id = customer.CustomerId, LoyaltyIndicator = "Y"});
+            {
+                Reponse = { }
+            });
         }
     }
 }
