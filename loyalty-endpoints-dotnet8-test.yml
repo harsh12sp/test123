@@ -15,8 +15,8 @@ steps:
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
-    feedsToUse: 'config'
-    nugetConfigPath: 'source/nuget.config'
+    feedsToUse: 'select'
+    vstsFeed: '4f92a9d6-ce6d-44de-a4d1-dd4c2f11f052'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build'
