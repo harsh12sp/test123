@@ -12,10 +12,6 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.Hana
 
         public async Task<CustomerLoyaltyIndicator> CreateCustomerLoyalty(Customer customer)
         {
-            if (customer == null)
-            {
-                throw new ArgumentNullException(nameof(customer));
-            }
 
             using (var client = new HttpClient())
             {

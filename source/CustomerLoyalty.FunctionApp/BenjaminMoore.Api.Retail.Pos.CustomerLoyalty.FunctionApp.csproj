@@ -7,6 +7,7 @@
     <PackageReference Include="BenjaminMoore.Api.Retail.Pos.Common" Version="2.0.7" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.4.1" />
+    <PackageReference Include="Azure.Messaging.EventGrid" Version="4.25.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomerLoyalty.Services\BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.Services.csproj" />
