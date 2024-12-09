@@ -1,7 +1,7 @@
 name: $(date:yyyyMMdd)$(rev:.r)_$(SourceBranchName)
 
 trigger:
-- master
+- feature/sanitize-code
 
 pool:
   vmImage: 'ubuntu-latest'
