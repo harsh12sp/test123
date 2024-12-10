@@ -26,40 +26,8 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp.Utils
 
             ObjectResult errorResponse = null;
 
-            if (error.InnerException is HanaRequestException hanaRequestException)
-            {
-                request = hanaRequestException.HttpRequestInfo;
-
-                if (hanaRequestException.StatusCode == HttpStatusCode.BadRequest)
-                {
-
-                    errorResponse = new BadRequestObjectResult(
-                       new ErrorInfo
-                       {
-                           Errors = JObject.Parse(hanaRequestException.Errors),
-                           ResponseInfo = new ResponseMetadata { ResponseTime = $"{error.ExecutionTime.TotalMilliseconds}ms" }
-                       });
-                }
-                else
-                {
-
-                    CustomError customError = new CustomError
-                    {
-                        Code = ErrorCode,
-                        Message = ErrorMessage,
-                        Details = ErrorDetails,
-                        Target = ErrorTarget
-                    };
-
-                    errorResponse = new BadRequestObjectResult(
-                        new ErrorInfo
-                        {
-                            Errors = JObject.Parse(JsonConvert.SerializeObject(customError)),
-                            ResponseInfo = new ResponseMetadata { ResponseTime = $"{error.ExecutionTime.TotalMilliseconds}ms" }
-                        });
-                }
-            }
-            else if (error.InnerException is ArgumentNullException argumentNullException)
+            
+            if (error.InnerException is ArgumentNullException argumentNullException)
             {
                 errorResponse = new BadRequestObjectResult(argumentNullException.Message);
             }

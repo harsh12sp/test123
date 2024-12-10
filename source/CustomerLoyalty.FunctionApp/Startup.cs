@@ -16,7 +16,7 @@ namespace BenjaminMoore.Api.Retail.Pos.CustomerLoyalty.FunctionApp
             // This should be the only location outside of AzureConfigurationSettings class where we directly read settings.
             string env = Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT");
 
-            if (string.IsNullOrWhiteSpace(env) || env != "Development")
+            if (string.IsNullOrWhiteSpace(env) || env != "Development" || true)
             {
                 ConfigureProduction(builder);
             }

@@ -23,16 +23,7 @@ namespace BenjaminMoore.Api.Retail.Pos.Customers.FunctionApp.TestHelpers
         {
             ObjectResult errorResponse = null;
 
-            if (error.InnerException is HanaRequestException hanaRequestException)
-            {
-                errorResponse = new BadRequestObjectResult(
-                   new ErrorInfo
-                   {
-                       Errors = JObject.Parse(hanaRequestException.Errors),
-                       ResponseInfo = new ResponseMetadata { ResponseTime = $"{error.ExecutionTime.TotalMilliseconds}ms" }
-                   });
-            }
-            else if (error.InnerException is ArgumentNullException argumentNullException)
+            if (error.InnerException is ArgumentNullException argumentNullException)
             {
                 errorResponse = new BadRequestObjectResult(argumentNullException.Message);
             }
