@@ -10,13 +10,6 @@ variables:
   BuildConfiguration: release
 
 steps:
-# - task: DotNetCoreCLI@2
-#   displayName: 'Restore'
-#   inputs:
-#     command: 'restore'
-#     projects: '**/*.csproj'
-#     feedsToUse: 'select'
-#     vstsFeed: '4f92a9d6-ce6d-44de-a4d1-dd4c2f11f052'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build'
